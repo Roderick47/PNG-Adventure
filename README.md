@@ -120,3 +120,25 @@ Stilt Village touch controls are now outside the canvas. On portrait coarse-poin
 `coast/input/touch.js` tracks each pointer independently and exposes pressed visual feedback and accessible `aria-pressed` state. Two fingers on the same button do not release prematurely; simultaneous jump plus movement works; pointer cancellation, lost capture, pause, restart, and focus loss clear held touches. Keyboard and touch inputs are combined so neither can cancel the other. The existing physics, game levels, sprite art, scores, controls and save data remain unchanged.
 
 Touch behavior is covered by `tests/touch.test.cjs`; the full game boot smoke test also loads the new adapter. The offline PWA cache now includes the touch adapter.
+
+
+## Phase 2.4.2 — Dynamic platform engine
+
+The new `coast/world/platforms.js` module provides a dependency-free registry for
+moving or temporarily non-solid one-way surfaces. Platform IDs are stable; each
+platform may provide an update callback, a landing callback, and optional reset
+logic. Dynamic collision geometry is supplied independently of the original
+`CoastLevel.surfaces` array, which is never modified.
+
+The player physics controller advances platforms within its existing 1/120-second
+substeps, carries grounded riders by the surface's x/y displacement, resolves
+support and one-way landing across static and dynamic surfaces, and clears support
+when jumping or when a surface disappears. Restart restores platform state and
+clears displacement. A disappearing platform is not considered ground.
+
+No moving canoes, breakable planks or nets are added to the shipped level in
+this infrastructure milestone; Phase 2.4.3 and later add objects and their art.
+No additional game controls or save migrations are needed.
+
+See `tests/platforms.test.cjs` for collision, ride, jump, collapse,
+reset, callback and frame-rate consistency tests.
