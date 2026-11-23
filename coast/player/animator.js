@@ -80,7 +80,8 @@
     }
     function current(){
       const count=counts[state],rate=fps[state];
-      const pos=Math.floor(Math.max(0,age)*rate);
+      // Tolerate floating-point drift at exact sprite-frame boundaries.
+      const pos=Math.floor(Math.max(0,age)*rate+1e-8);
       const frame=NON_LOOP.has(state)?Math.min(count-1,pos):pos%count;
       return {action:state,frame,elapsed:age,locked:forced!==null};
     }
