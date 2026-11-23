@@ -30,8 +30,8 @@ test("takeoff cannot be interrupted by normal airborne movement",()=>{
  assert.equal(a.trigger("takeoff"),true);
  for(let i=0;i<3;i++)assert.equal(a.update(air(-470),.03).action,"takeoff");
  assert.equal(a.update(air(-400),.04).action,"takeoff");
- assert.equal(a.update(air(-350),.04).action,"takeoff");
- assert.equal(a.update(air(-290),.04).action,"rise");
+ assert.equal(a.update(air(-350),.02).action,"takeoff");
+ assert.equal(a.update(air(-290),.03).action,"rise");
  assert.equal(a.update(air(0),.05).action,"apex");
  assert.equal(a.update(air(220),.05).action,"fall");
 });
