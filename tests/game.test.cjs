@@ -49,7 +49,8 @@ test("game boots, jumps, scores and pauses with the art renderer loaded", () => 
     originalDrawRunner(ctx, pose);
   };
   vm.runInContext(source("game.js"), context);
-  assert.match(elements.overlay.innerHTML, /START RUN/);
+  assert.match(elements.overlay.innerHTML, /ORIGINAL RUNNER/);
+  assert.match(elements.overlay.innerHTML, /PLAY STILT VILLAGE/);
 
   listeners["overlay:click"]({
     target: { closest() { return { dataset: { action: "start" } }; } }
