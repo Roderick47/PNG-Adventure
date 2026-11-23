@@ -46,7 +46,8 @@
       const axis=(keys.right?1:0)-(keys.left?1:0);
       const vertical=(keys.down?1:0)-(keys.up?1:0);
       const ladder=level.nearbyLadder(player.x,player.feet);
-      const wantsClimb=ladder && !keys.jump && (keys.up || (keys.down&&!player.grounded));
+      const atLadderTop=ladder && Math.abs(player.feet-ladder.y)<20;
+      const wantsClimb=ladder && !keys.jump && (keys.up || (keys.down&&(!player.grounded||atLadderTop)));
       if(wantsClimb&&!player.climbing){
         player.climbing=true;player.vy=0;player.grounded=false;
         player.coyote=0;player.buffer=0;
