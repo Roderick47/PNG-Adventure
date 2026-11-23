@@ -114,6 +114,40 @@
     pixel(g,x+39,y-32,4,36,P.woodDark);
     pixel(g,x+44,y-30,35,28,P.cream);
   }
+  // Playable canoe: the top timber rail corresponds exactly to the collision
+  // deck at p.y. Drawn bobbing is intentionally only below that top rail.
+  function canoePlatform(g,p,time){
+    const x=Math.round(p.x),y=Math.round(p.y),w=Math.round(p.w);
+    const bob=Math.round(Math.sin(time*2.7+p.x*.012)*2);
+    const hullY=y+6+bob;
+    // Light wake and ripple trails follow motion, not a secondary collision.
+    const wake=p.direction<0?x+w+4:x-27;
+    const shimmer=Math.round(Math.sin(time*5+p.x*.02)*3);
+    pixel(g,wake,y+24+shimmer,25,2,"#c2eee1");
+    pixel(g,wake+8,y+30+shimmer,19,2,"#8bd4d2");
+    pixel(g,x+10,y+29+bob,w-21,2,"#8ed8d0");
+    pixel(g,x+24,y+33+bob,w-47,2,"#54b4bb");
+    // Outrigger (distinctive PNG canoe silhouette).
+    pixel(g,x-12,hullY+15,w+24,4,P.woodDark);
+    pixel(g,x-9,hullY+13,w+18,3,"#d5a66e");
+    pixel(g,x+14,hullY+4,6,13,P.woodDark);
+    pixel(g,x+w-20,hullY+4,6,13,P.woodDark);
+    // Carved timber hull with pointed bow/stern, shading and visible gunwale.
+    pixel(g,x+5,hullY,w-10,11,P.woodDark);
+    pixel(g,x+8,hullY+3,w-16,13,"#ae6844");
+    pixel(g,x+17,hullY+10,w-34,10,"#8d4936");
+    pixel(g,x+27,hullY+17,w-54,5,P.woodDark);
+    pixel(g,x,hullY-1,13,7,P.woodDark);
+    pixel(g,x+w-13,hullY-1,13,7,P.woodDark);
+    pixel(g,x+12,hullY+7,w-24,3,"#deaa6c");
+    // The solid, foot-height deck remains at a stable y even on waves.
+    pixel(g,x+5,y-2,w-10,5,P.woodDark);
+    pixel(g,x+9,y-2,w-18,3,"#ecc58a");
+    for(let step=20;step<w-12;step+=18)pixel(g,x+step,y,2,2,P.woodDark);
+    // Decorative prow ornaments; do not alter collision.
+    pixel(g,x+5,y-6,4,7,P.cream);
+    pixel(g,x+w-9,y-6,4,7,P.cream);
+  }
   function plank(g,x,y,w,kind){
     const shore=kind==="shore",roof=kind==="roof";
     const plankColor=roof?"#a55d49":shore?"#cb9b66":P.woodLight;
@@ -160,5 +194,5 @@
     pixel(g,0,535,960,5,"#266f82");
   }
   prepare();
-  root.CoastSprites={sprite,house,palm,boat,plank,background,colors:P,playerManifest:boy.FRAME_COUNTS,playerOrigin:boy.ORIGIN};
+  root.CoastSprites={sprite,house,palm,boat,canoePlatform,plank,background,colors:P,playerManifest:boy.FRAME_COUNTS,playerOrigin:boy.ORIGIN};
 })(typeof window!=="undefined"?window:globalThis);

@@ -15,6 +15,7 @@
   let checkpoint=false,invulnerable=0,waterSplash=0,fx=[],best=null,lastSafe={x:83,feet:L.FLOOR};
   const p={x:83,feet:L.FLOOR,vx:0,vy:0,grounded:true,climbing:false,face:1,crouch:false,anim:0,coyote:0,buffer:0};
   const platforms=window.CoastPlatforms.create();
+  const canoes=window.CoastCanoes.install(platforms);
   const controller=window.CoastController.create(L,p,undefined,platforms);
   try{best=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");}catch(_){}
   function saveBest(){
@@ -162,6 +163,11 @@
     for(const pform of L.surfaces){
       if(pform.x+pform.w<camera-80||pform.x>camera+1040)continue;
       S.plank(g,pform.x,pform.y,pform.w,pform.kind);
+    }
+    for(const canoe of canoes){
+      if(canoe.x+canoe.w>=camera-60&&canoe.x<=camera+1020){
+        S.canoePlatform(g,canoe,clock);
+      }
     }
     for(const ladder of L.ladders){
       for(let y=ladder.y;y<ladder.y+ladder.h;y+=16){
