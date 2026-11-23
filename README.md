@@ -1,8 +1,20 @@
-# PNG Adventure: Moresby Run
+# PNG Adventure — Stilt Village + Moresby Run
 
-A lightweight, free-to-play, Papua New Guinea-inspired 2D endless runner.
+Two free PNG-themed browser game modes: the new **Stilt Village** free-movement platformer at `/coast/` and the earlier **Moresby Run** endless runner at `/`.
 
 **Prototype v0.3** — no backend, game framework, ads, account, payments or wagers. It works in an ordinary browser, and is an offline-capable installable PWA when hosted securely.
+
+## Stage 1: Stilt Village (Coastal Village Phase 1)
+
+Open `/coast/` for the new handcrafted stage. **This is the recommended game.**
+
+- **Keyboard:** Left/Right or A/D to move, Space to jump, Down/S to crouch, Up/Down at ladders to climb, P/Escape to pause.
+- **Touch:** 5 on-screen controls for left, right, up, down and jump. Hold jump for more height.
+- Cross the water on wooden boardwalks; visit stilt houses, climb to roofs, gather gold tokens, avoid crabs and timed leaping fish, reach the end jetty.
+- A checkpoint is midway through the level; player keeps three hearts and the fastest stage clear is saved locally.
+- Original generated pixel sprites are defined in `coast/sprites.js`; level geometry and hazards in `coast/level.js`; gameplay in `coast/game.js`. No external asset requests.
+
+## Original mode: Moresby Run
 
 ## How to play
 

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#183a51">
+<meta name="description" content="Explore Stage 1: Stilt Village. A 90s-inspired PNG coastal platform adventure.">
+<title>Stilt Village | PNG Adventure</title>
+<link rel="icon" type="image/svg+xml" href="../assets/icon.svg">
+<link rel="stylesheet" href="./style.css">
+<script src="./level.js" defer></script>
+<script src="./sprites.js" defer></script>
+<script src="./game.js" defer></script>
+</head>
+<body>
+<div class="page">
+  <header class="site-header">
+    <a href="../" class="brand">✦ PNG <span>ADVENTURE</span></a>
+    <div class="chapter"><span class="diamond">◆</span> WORLD 01 · COASTAL VILLAGE</div>
+    <a class="back" href="../">OTHER GAME MODES</a>
+  </header>
+  <main>
+    <div class="stage-label"><span class="chip">01</span><div><h1>STILT VILLAGE</h1><p>Across the lagoon · pixel platform adventure</p></div></div>
+    <div class="game-shell">
+      <canvas id="scene" width="960" height="540" aria-label="Playable coastal village platforming stage"></canvas>
+      <div id="hud" class="hud hidden">
+        <div class="stat"><span>HEALTH</span><strong id="hearts">♥ ♥ ♥</strong></div>
+        <div class="stat"><span>SEA TOKENS</span><strong id="coins">◆ 0</strong></div>
+        <div class="stat"><span>TIME</span><strong id="timer">0:00</strong></div>
+        <button type="button" id="pause" class="pause-btn" aria-label="Pause the game">Ⅱ</button>
+      </div>
+      <div id="status" class="status" role="status"></div>
+      <div class="touch" aria-label="Mobile game controls">
+        <div class="dpad">
+          <button data-control="left" aria-label="Move left">◀</button>
+          <button data-control="right" aria-label="Move right">▶</button>
+          <button data-control="up" aria-label="Climb up">▲</button>
+          <button data-control="down" aria-label="Crouch or climb down">▼</button>
+        </div>
+        <button class="jump-btn" data-control="jump" aria-label="Jump">JUMP <span>●</span></button>
+      </div>
+      <div id="overlay" class="overlay"></div>
+    </div>
+    <div class="below">
+      <div class="controls-hint"><span>◀ ▶</span> MOVE <span>SPACE</span> JUMP <span>↓</span> CROUCH <span>↑ ↓</span> CLIMB LADDERS</div>
+      <button type="button" id="reset" class="restart">↻ RESTART</button>
+    </div>
+    <p class="note">Phase 1 art-and-gameplay prototype. All characters, scenery, enemies and tiles are original pixel drawings created by the game. Free to play. Saves stay on this device.</p>
+  </main>
+</div>
+</body>
+</html>
