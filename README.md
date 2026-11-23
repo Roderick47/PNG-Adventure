@@ -111,3 +111,12 @@ The controller emits takeoff and landing events for the animation system.
 The level layout, saved completion times, and PWA routes are unchanged.
 Tests in `tests/controller.test.cjs` cover motion, input, platform edges,
 ladders, respawning, and frame-rate consistency.
+
+
+## Phase 2.4.1 — Responsive mobile gamepad
+
+Stilt Village touch controls are now outside the canvas. On portrait coarse-pointer devices, the control dock sits **below** the stage; on landscape touch devices, it overlays the bottom corners. Direction buttons are approximately 58 × 58 CSS pixels (48 × 48 on short landscape screens); jump is 94 × 94 (82 × 82 on short landscape screens). Very narrow portrait screens use a 50-pixel directional fallback.
+
+`coast/input/touch.js` tracks each pointer independently and exposes pressed visual feedback and accessible `aria-pressed` state. Two fingers on the same button do not release prematurely; simultaneous jump plus movement works; pointer cancellation, lost capture, pause, restart, and focus loss clear held touches. Keyboard and touch inputs are combined so neither can cancel the other. The existing physics, game levels, sprite art, scores, controls and save data remain unchanged.
+
+Touch behavior is covered by `tests/touch.test.cjs`; the full game boot smoke test also loads the new adapter. The offline PWA cache now includes the touch adapter.
