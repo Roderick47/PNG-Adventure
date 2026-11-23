@@ -75,12 +75,17 @@
     for(let i=0;i<n;i++)fx.push({x,y,vx:(Math.random()-.5)*130,vy:-70-Math.random()*100,life:.45+Math.random()*.25,color});
   }
   function hurt(fall=false){
-    if(invulnerable>0||mode!=="playing")return;
-    hearts--;invulnerable=1.4;
-    burst(p.x,p.feet-25,"#ffe0a7",12);
-    updateHud();
-    animator.trigger("hurt");
-    if(hearts<=0){display("over");return;}
+    if(mode!=="playing"||(!fall&&invulnerable>0))return;
+    const damage=invulnerable<=0;
+    if(damage){
+      hearts--;invulnerable=1.4;
+      burst(p.x,p.feet-25,"#ffe0a7",12);
+      updateHud();
+      animator.trigger("hurt");
+      if(hearts<=0){display("over");return;}
+    }
+    // Water must ALWAYS recover the player to a safe surface, even during
+    // post-hit invulnerability. Otherwise they can remain below the stage.
     const spawn=checkpoint?{x:L.checkpoint.x,feet:390}:lastSafe;
     controller.reset(spawn.x,spawn.feet);
     flash(fall?"SPLASH! WATCH THE GAPS":"OUCH! BE CAREFUL");
