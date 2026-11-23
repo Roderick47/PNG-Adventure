@@ -6,7 +6,7 @@
   const api=factory();
   if(typeof module!=="undefined" && module.exports)module.exports=api;
   if(root)root.CoastBoy=api;
-})(typeof globalThis!=="undefined"?globalThis:this,function(){
+})(typeof window!=="undefined"?window:(typeof globalThis!=="undefined"?globalThis:this),function(){
   "use strict";
   const WIDTH=48,HEIGHT=64,ORIGIN={x:24,y:64};
   const palette=Object.freeze({
