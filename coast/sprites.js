@@ -63,6 +63,10 @@
     atlas.coin=Array.from({length:4},(_,i)=>buildCoin(i));
   }
   function sprite(g,name,frame,x,y,w,h,flip=false){
+    if(Object.prototype.hasOwnProperty.call(boy.FRAME_COUNTS,name)){
+      boy.draw(g,boyAtlas,name,frame,x+w/2,y+h,1,flip);
+      return;
+    }
     const sheet=atlas[name]||atlas.idle;
     const n=((Math.floor(frame)%sheet.length)+sheet.length)%sheet.length;
     const im=sheet[n];
