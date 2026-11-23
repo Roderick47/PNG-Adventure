@@ -142,3 +142,25 @@ No additional game controls or save migrations are needed.
 
 See `tests/platforms.test.cjs` for collision, ride, jump, collapse,
 reset, callback and frame-rate consistency tests.
+
+
+## Phase 2.4.3 — Moving lagoon canoes
+
+Three optional **moving outrigger canoes** now ferry along short sections of the
+Stilt Village lagoon. They are playable one-way platforms: the character can
+land on their timber decks, ride without holding a direction, and jump off.
+The existing boardwalk and roof route stays intact.
+
+Canoe positions are defined in `coast/world/canoes.js`, using deterministic
+back-and-forth movement at 48–55 px/s, stable deck heights above the water,
+and a reversible path. `coast/sprites.js` draws the canoe hulls, outriggers,
+prow ornaments, and small wakes using original generated pixel artwork. The
+hull bobs visually without moving the solid deck, preventing collision jitter.
+
+Routes are registered in the Phase 2.4.2 platform manager at start-up; their
+collision and carry behavior are calculated inside the existing player physics
+substeps. Reset restores original phase, position and travel direction.
+`tests/canoes.test.cjs` verifies route geometry, turnaround, landing, player
+carry, jumping, resets, input rate consistency and invalid configuration.
+
+This milestone doesn't introduce collapsing planks or nets (Phases 2.4.4–2.4.5).
