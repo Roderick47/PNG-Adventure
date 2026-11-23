@@ -1,7 +1,7 @@
 /* Offline caching for this small, fully static prototype. */
-const CACHE = "png-adventure-v0.2";
+const CACHE = "png-adventure-v0.3";
 const ASSETS = [
-  "./", "./index.html", "./style.css", "./src/core.js", "./src/game.js",
+  "./", "./index.html", "./style.css", "./src/core.js", "./src/level.js", "./src/art.js", "./src/game.js",
   "./manifest.webmanifest", "./assets/icon.svg"
 ];
 self.addEventListener("install", function (event) {

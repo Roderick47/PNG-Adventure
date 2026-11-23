@@ -10,6 +10,8 @@
   <link rel="icon" type="image/svg+xml" href="./assets/icon.svg">
   <link rel="stylesheet" href="./style.css">
   <script src="./src/core.js" defer></script>
+  <script src="./src/level.js" defer></script>
+  <script src="./src/art.js" defer></script>
   <script src="./src/game.js" defer></script>
 </head>
 <body>
@@ -18,7 +20,7 @@
       <a class="brand" href="./" aria-label="PNG Adventure home">
         <span class="brand-icon" aria-hidden="true">★</span>
         <span>PNG <strong>ADVENTURE</strong></span>
-        <span class="version">LITE 0.2</span>
+        <span class="version">LITE 0.3</span>
       </a>
       <div class="top-actions">
         <span class="offline-label">PLAY FREE · NO ACCOUNT</span>
@@ -32,7 +34,7 @@
         </canvas>
         <div class="hud hidden" id="hud" aria-live="off">
           <div class="hud-group"><small>HEALTH</small><b id="health">♥ ♥ ♥</b></div>
-          <div class="hud-group center"><small>SCORE</small><b id="score">0</b><span id="distance">0 m</span></div>
+          <div class="hud-group center"><small>SCORE</small><b id="score">0</b><span id="distance">0 m</span><span id="area" class="area-name">GORDONS MARKET</span></div>
           <div class="hud-group right"><small>COINS</small><b id="coins">● 0</b></div>
           <button class="pause" id="pause" type="button" aria-label="Pause game">Ⅱ</button>
         </div>
@@ -45,7 +47,7 @@
       </section>
       <div class="under-game">
         <span>✦ MADE FOR PNG, PLAYABLE ANYWHERE</span>
-        <span class="keyboard-hint">SPACE / ↑ JUMP · ↓ SLIDE · P PAUSE</span>
+        <span class="keyboard-hint">SPACE / ↑ JUMP · ↓ SLIDE · P PAUSE · LAND ON PLATFORMS</span>
       </div>
       <p class="disclaimer">Early playable prototype. Fictional PNG-inspired scenery. Progress is stored only on this device; no accounts, ads, purchases or cash prizes.</p>
     </main>

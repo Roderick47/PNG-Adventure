@@ -30,3 +30,16 @@ h1{font-size:clamp(39px,7.3vw,84px)}h1 span{display:block;color:var(--gold)}h2{f
 @media(max-width:660px){.shell{padding:8px 9px 15px}.topbar{margin-bottom:8px;min-height:34px}.brand{font-size:12px;gap:5px}.brand-icon{width:27px;height:27px}.version{font-size:8px;padding:4px}.offline-label,.keyboard-hint{display:none}.game-frame{border-width:3px;border-radius:10px}.panel{width:89%;padding:10px 0}.panel p{margin:9px 0}.actions{gap:7px;margin-top:9px}.btn{padding:8px 11px;min-height:35px;font-size:10px}.stats{margin-top:11px;gap:13px}.stat strong{font-size:16px}.hud{padding:7px}.hud-group{min-width:60px}.hud-group small{font-size:8px}.hud-group.right{margin-right:29px}.pause{top:7px;right:6px;width:27px;height:26px}.controls{padding:0 8px;bottom:7px}.control{width:65px;height:51px;font-size:21px;border-radius:11px}.control span{font-size:8px}.under-game{font-size:8px}.disclaimer{font-size:10px}}
 @media(max-height:520px) and (orientation:landscape){.shell{padding:4px 10px}.topbar{margin-bottom:3px;min-height:29px}.game-frame{width:min(100%,calc((100svh - 74px)*16/9))}.under-game,.disclaimer{display:none}.panel p{margin:7px 0}.actions{margin-top:9px}.btn{padding:7px 10px;min-height:34px}.stats{margin-top:10px}.locker-card{padding:7px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+
+/* v0.3 polish */
+.area-name{display:block;color:#ffe9aa;font-size:9px;font-weight:900;letter-spacing:.14em;text-shadow:1px 2px #264f59;margin-top:3px}
+.game-frame{border-color:#7ca79e;box-shadow:0 8px 0 #162f3b,0 23px 60px #0008,inset 0 0 0 2px #172f3999}
+.overlay{background:linear-gradient(90deg,#102b37f2 0%,#102c38e5 52%,#0a253a96 100%);backdrop-filter:blur(2px)}
+.panel{padding-inline:16px}
+.panel .stats,.result-row{border-top:1px solid #e8e9d54d;padding-top:16px}
+.btn.primary{background:linear-gradient(180deg,#ffebaa,#f6c35d);color:#243341;box-shadow:0 4px 0 #ad7843}
+.btn.secondary,.outline-button{border-color:#91a9a7;background:#1f4b58eb}
+.control{background:#113a4be7;border:3px solid #ffe3a0;color:#fff2c5;box-shadow:0 5px 0 #0b2b37b0}
+.control:active{transform:translateY(2px);box-shadow:0 2px 0 #0b2b37b0}
+.hud-group b,.stat strong{font-variant-numeric:tabular-nums}
+@media(max-width:660px){.area-name{font-size:8px;letter-spacing:.04em}.panel{padding-inline:8px}.panel .stats,.result-row{padding-top:7px}}
