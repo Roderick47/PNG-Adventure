@@ -95,3 +95,19 @@ Open `/coast/player/` to inspect, scrub, pause and flip the 12 pose groups (idle
 ## Phase 2.2 — Event-driven animation
 
 Stilt Village now uses `coast/player/animator.js`, an independently tested deterministic state machine with timing based on `CoastBoy.FRAME_COUNTS` and `CoastBoy.FRAME_FPS`. It selects idle/run/crouch/climb/airborne frames from player movement and plays explicit takeoff, land, hurt and victory events with interruption priorities. The existing platform collision, player control, level, save and reward mechanics are unchanged. Animation is frame-rate-independent, freezes on pause and continues celebrating at victory. Dedicated tests live in `tests/animator.test.cjs`.
+
+## Phase 2.3 — Movement and physics polish
+
+Stilt Village now uses the dedicated `coast/player/controller.js` movement module.
+Horizontal movement accelerates and decelerates rather than snapping to full speed.
+Held jumps and short hops support different jump heights.
+
+Physics includes 100 ms coyote time, 120 ms jump buffering, and bounded
+1/120-second substeps for more reliable collisions on slower mobile devices.
+Collision uses the gameplay hitbox, not the 48x64 character sprites.
+Crouching reduces movement speed; ladders now support descending from above.
+
+The controller emits takeoff and landing events for the animation system.
+The level layout, saved completion times, and PWA routes are unchanged.
+Tests in `tests/controller.test.cjs` cover motion, input, platform edges,
+ladders, respawning, and frame-rate consistency.

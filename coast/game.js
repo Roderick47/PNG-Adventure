@@ -11,7 +11,8 @@
   const SAVE_KEY="png-adventure-coast-v1";
   let mode="menu",camera=0,clock=0,runTime=0,last=0,coins=[],crabs=[],fish=[],collected=0,hearts=3;
   let checkpoint=false,invulnerable=0,waterSplash=0,fx=[],best=null,lastSafe={x:83,feet:L.FLOOR};
-  const p={x:83,feet:L.FLOOR,vy:0,grounded:true,climbing:false,face:1,crouch:false,anim:0,coyote:0,buffer:0};
+  const p={x:83,feet:L.FLOOR,vx:0,vy:0,grounded:true,climbing:false,face:1,crouch:false,anim:0,coyote:0,buffer:0};
+  const controller=window.CoastController.create(L,p);
   try{best=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");}catch(_){}
   function saveBest(){
     if(!best||runTime<best.time||runTime===best.time&&collected>best.coins){
@@ -20,7 +21,7 @@
     }
   }
   function reset(){
-    p.x=83;p.feet=L.FLOOR;p.vy=0;p.grounded=true;p.climbing=false;p.coyote=0;p.buffer=0;p.crouch=false;
+    controller.reset();p.anim=0;
     animator.reset();
     camera=0;clock=0;runTime=0;hearts=3;checkpoint=false;invulnerable=0;collected=0;fx=[];
     lastSafe={x:83,feet:L.FLOOR};
@@ -74,73 +75,41 @@
     for(let i=0;i<n;i++)fx.push({x,y,vx:(Math.random()-.5)*130,vy:-70-Math.random()*100,life:.45+Math.random()*.25,color});
   }
   function hurt(fall=false){
-    if(invulnerable>0||mode!=="playing")return;
-    hearts--;invulnerable=1.4;
-    burst(p.x,p.feet-25,"#ffe0a7",12);
-    updateHud();
-    animator.trigger("hurt");
-    if(hearts<=0){display("over");return;}
+    if(mode!=="playing"||(!fall&&invulnerable>0))return;
+    const damage=invulnerable<=0;
+    if(damage){
+      hearts--;invulnerable=1.4;
+      burst(p.x,p.feet-25,"#ffe0a7",12);
+      updateHud();
+      animator.trigger("hurt");
+      if(hearts<=0){display("over");return;}
+    }
+    // Water must ALWAYS recover the player to a safe surface, even during
+    // post-hit invulnerability. Otherwise they can remain below the stage.
     const spawn=checkpoint?{x:L.checkpoint.x,feet:390}:lastSafe;
-    p.x=spawn.x;p.feet=spawn.feet;p.vy=0;p.climbing=false;p.grounded=true;
+    controller.reset(spawn.x,spawn.feet);
     flash(fall?"SPLASH! WATCH THE GAPS":"OUCH! BE CAREFUL");
   }
   function jump(){
     if(mode!=="playing")return;
-    p.buffer=.12;
-    if(p.grounded||p.coyote>0){
-      p.vy=-525;p.grounded=false;p.climbing=false;p.coyote=0;p.buffer=0;
-      animator.trigger("takeoff");
-      burst(p.x,p.feet-3,"#f2dbaa",7);
-    }
-  }
-  function downPressed(){
-    const ladder=L.nearbyLadder(p.x,p.feet);
-    if(ladder){p.climbing=true;p.vy=0;}
+    controller.requestJump();
   }
   function update(dt){
     clock+=dt;
     if(mode!=="playing")return;
     runTime+=dt;
     invulnerable=Math.max(0,invulnerable-dt);
-    p.anim+=dt*9;
-    const axis=(keys.right?1:0)-(keys.left?1:0);
-    if(axis)p.face=axis;
-    const xBefore=p.x;
-    p.x=L.clamp(p.x+axis*(keys.down?115:235)*dt,18,L.WORLD_WIDTH-18);
-    const ladder=L.nearbyLadder(p.x,p.feet);
-    p.crouch=keys.down&&p.grounded&&!p.climbing;
-    if(p.climbing){
-      if(!ladder){p.climbing=false;p.vy=0;}
-      else{
-        const vertical=(keys.down?1:0)-(keys.up?1:0);
-        p.feet=L.clamp(p.feet+vertical*155*dt,ladder.y-5,ladder.y+ladder.h+8);
-        if(keys.jump){p.climbing=false;jump();}
-        if(!vertical&&Math.abs(xBefore-p.x)>34)p.climbing=false;
-      }
-    }else{
-      if(ladder&&keys.up&&!keys.jump&&p.feet>ladder.y+4){
-        p.climbing=true;p.grounded=false;p.vy=0;
-      } else if(ladder&&keys.down&&!p.grounded){
-        p.climbing=true;p.vy=0;
-      }
+    const movement=controller.step(keys,dt);
+    if(movement.jumped){
+      animator.trigger("takeoff");
+      burst(p.x,p.feet-3,"#f2dbaa",7);
     }
-    if(!p.climbing){
-      const prev=p.feet,wasGrounded=p.grounded;
-      p.coyote=wasGrounded?.09:Math.max(0,p.coyote-dt);
-      p.buffer=Math.max(0,p.buffer-dt);
-      if(!keys.jump&&p.vy<-210)p.vy=-210; // variable-height jump
-      p.vy=Math.min(860,p.vy+1180*dt);
-      p.feet+=p.vy*dt;
-      const surface=L.landing(prev,p.feet,p.x,29);
-      if(p.vy>=0&&surface){
-        if(!wasGrounded&&p.feet-surface.y>1){
-          burst(p.x,surface.y,"#e4c591",5);
-          animator.trigger("land");
-        }
-        p.feet=surface.y;p.grounded=true;p.vy=0;
-        if(p.buffer>0)jump();
-        if(surface.kind==="shore"&&p.x<475)lastSafe={x:p.x,feet:p.feet};
-      }else p.grounded=false;
+    if(movement.landed){
+      burst(p.x,p.feet,"#e4c591",5);
+      animator.trigger("land");
+    }
+    if(p.grounded && p.feet===L.FLOOR && p.x<475){
+      lastSafe={x:p.x,feet:p.feet};
     }
     if(p.feet>L.WATER_Y+80){hurt(true);return;}
     if(!checkpoint&&p.x>=L.checkpoint.x){checkpoint=true;flash("CHECKPOINT REACHED!");}
@@ -157,7 +126,8 @@
       if(crab.x<crab.min||crab.x>crab.max)crab.dir*=-1;
       if(!L.overlap(body,{x:crab.x-15,y:crab.y-15,w:30,h:17}))continue;
       if(p.vy>100&&p.feet-4<crab.y+8){
-        crab.alive=false;p.vy=-330;burst(crab.x,crab.y,"#f4b383",13);flash("CRAB BOUNCE!");
+        crab.alive=false;p.vy=-330;p.grounded=false;p.coyote=0;p.buffer=0;
+        burst(crab.x,crab.y,"#f4b383",13);flash("CRAB BOUNCE!");
       }else {hurt();return;}
     }
     for(const f of fish){
@@ -242,7 +212,7 @@
       animator.update({
         grounded:p.grounded,
         velocityY:p.vy,
-        moving:(keys.left!==keys.right),
+        moving:Math.abs(p.vx)>18,
         crouching:p.crouch,
         climbing:p.climbing,
         victorious:mode==="win"
@@ -255,7 +225,6 @@
       if(isDown&&!keys.jump)jump();
       keys.jump=isDown;return;
     }
-    if(k==="down"&&isDown&&!keys.down)downPressed();
     keys[k]=isDown;
   }
   function mapped(code){
