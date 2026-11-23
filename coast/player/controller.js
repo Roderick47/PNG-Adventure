@@ -16,21 +16,21 @@
   });
   const moveTowards=(current,target,amount)=>current<target?
     Math.min(current+amount,target):Math.max(current-amount,target);
-  function create(level,player,overrides){
+  function create(level,player,overrides,platforms){
     if(!level||!level.landing||!level.nearbyLadder)throw new TypeError("Coastal level collision API required");
     if(!player||typeof player!=="object")throw new TypeError("Mutable player required");
     const c={...SETTINGS,...(overrides||{})};
     if(c.maxStep<=0||c.gravity<=0)throw new RangeError("Invalid physics settings");
     function reset(x=83,feet=level.FLOOR){
       Object.assign(player,{x,feet,vx:0,vy:0,grounded:true,climbing:false,
-        face:1,crouch:false,coyote:0,buffer:0});
+        face:1,crouch:false,coyote:0,buffer:0,supportId:null});
     }
     function requestJump(){
       player.buffer=c.bufferSeconds;
     }
     function doJump(events){
       player.vy=c.jumpVelocity;player.grounded=false;player.climbing=false;
-      player.coyote=0;player.buffer=0;events.jumped=true;
+      player.coyote=0;player.buffer=0;player.supportId=null;events.jumped=true;
     }
     function step(keys,elapsed){
       const events={jumped:false,landed:false,walkedOff:false,climbing:false};
@@ -43,6 +43,21 @@
       return events;
     }
     function advance(keys,h,events){
+      // Keep all moving surfaces synchronized with the same 1/120-second
+      // physics substeps used for collision, rather than render frames.
+      if(platforms){
+        platforms.advance(h);
+        if(player.grounded&&player.supportId){
+          const surface=platforms.getSurface(player.supportId);
+          if(surface){
+            const delta=platforms.getDelta(player.supportId);
+            player.x=Math.max(18,Math.min(level.WORLD_WIDTH-18,player.x+delta.dx));
+            player.feet+=delta.dy;
+          }
+        }
+      }
+      const activeSurfaces=platforms?
+        level.surfaces.concat(platforms.getSurfaces()):level.surfaces;
       const axis=(keys.right?1:0)-(keys.left?1:0);
       const vertical=(keys.down?1:0)-(keys.up?1:0);
       const ladder=level.nearbyLadder(player.x,player.feet);
@@ -84,13 +99,16 @@
       // Check the surface under the current position, using exactly the same
       // horizontal bounds as landing. Leaving an edge enables coyote time.
       if(wasGrounded){
-        const support=level.surfaces.some(s=>
+        const support=activeSurfaces.find(s=>
           Math.abs(s.y-player.feet)<1.5 &&
           player.x+c.halfWidth>s.x && player.x-c.halfWidth<s.x+s.w);
         if(!support){
           player.grounded=false;
           player.coyote=c.coyoteSeconds;
+          player.supportId=null;
           events.walkedOff=true;
+        }else{
+          player.supportId=support.id||null;
         }
       }else{
         player.coyote=Math.max(0,(player.coyote||0)-h);
@@ -104,17 +122,20 @@
       player.vy=Math.min(c.maxFall,player.vy+c.gravity*h);
       player.feet+=player.vy*h;
       const surface=player.vy>=0?
-        level.landing(before,player.feet,player.x,c.halfWidth*2):null;
+        level.landing(before,player.feet,player.x,c.halfWidth*2,activeSurfaces):null;
       if(surface){
         player.feet=surface.y;player.vy=0;
         if(!player.grounded){
           player.grounded=true;
           player.coyote=0;
           if(!events.jumped)events.landed=true;
+          if(platforms&&surface.id)platforms.onLand(surface.id,player);
         }
+        player.supportId=surface.id||null;
         if(player.buffer>0)doJump(events);
       }else{
         player.grounded=false;
+        player.supportId=null;
       }
     }
     return Object.freeze({reset,requestJump,step,settings:Object.freeze(c)});
