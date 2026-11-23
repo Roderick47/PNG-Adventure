@@ -22,6 +22,7 @@ jobs:
           node --check coast/player/animator.js
           node --check coast/player/controller.js
           node --check coast/world/platforms.js
+          node --check coast/world/canoes.js
           node --check coast/input/touch.js
           node --check coast/player/workshop.js
           node --check coast/sprites.js
