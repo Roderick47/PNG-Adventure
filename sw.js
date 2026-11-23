@@ -1,9 +1,10 @@
 /* Offline caching for this small, fully static prototype. */
-const CACHE = "png-adventure-v0.4";
+const CACHE = "png-adventure-v0.5";
 const ASSETS = [
   "./", "./index.html", "./style.css", "./src/core.js", "./src/level.js", "./src/art.js", "./src/game.js",
   "./manifest.webmanifest", "./assets/icon.svg",
-  "./coast/", "./coast/index.html", "./coast/style.css", "./coast/level.js", "./coast/sprites.js", "./coast/game.js"
+  "./coast/", "./coast/index.html", "./coast/style.css", "./coast/level.js", "./coast/player/character.js", "./coast/sprites.js", "./coast/game.js",
+  "./coast/player/", "./coast/player/index.html", "./coast/player/workshop.js"
 ];
 self.addEventListener("install", function (event) {
   event.waitUntil(caches.open(CACHE).then(function (cache) { return cache.addAll(ASSETS); })
