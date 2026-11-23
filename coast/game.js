@@ -8,6 +8,8 @@
   const health=document.getElementById("hearts"),coinsEl=document.getElementById("coins"),timeEl=document.getElementById("timer");
   const statusEl=document.getElementById("status");
   const keys={left:false,right:false,up:false,down:false,jump:false};
+  const keyboardHeld={...keys},touchHeld={...keys};
+  const playArea=document.getElementById("play-area");
   const SAVE_KEY="png-adventure-coast-v1";
   let mode="menu",camera=0,clock=0,runTime=0,last=0,coins=[],crabs=[],fish=[],collected=0,hearts=3;
   let checkpoint=false,invulnerable=0,waterSplash=0,fx=[],best=null,lastSafe={x:83,feet:L.FLOOR};
@@ -28,15 +30,18 @@
     coins=L.coinGroups.map(([x,y])=>({x,y,taken:false}));
     crabs=L.crabs.map(c=>({...c,dir:1,alive:true}));
     fish=L.fish.map(f=>({...f}));
-    for(const key of Object.keys(keys))keys[key]=false;
+    releaseAll();
     updateHud();
     mode="playing";
+    playArea.classList.add("controls-live");
     overlay.classList.add("hidden");hud.classList.remove("hidden");
     statusEl.textContent="";
     canvas.focus();
   }
   function display(type){
     mode=type;hud.classList.toggle("hidden",type!=="playing");
+    playArea.classList.remove("controls-live");
+    releaseAll();
     overlay.classList.remove("hidden");
     let title="STILT VILLAGE",desc="Explore a PNG-inspired coastal village, jump between wooden walkways, avoid crabs and leaping fish, and find the final jetty.";
     let actions='<button data-action="play" class="primary">▶ START ADVENTURE</button><button data-action="help">CONTROLS</button>';
@@ -220,12 +225,13 @@
     }
     draw();requestAnimationFrame(loop);
   }
-  function setHeld(k,isDown){
-    if(k==="jump"){
-      if(isDown&&!keys.jump)jump();
-      keys.jump=isDown;return;
-    }
-    keys[k]=isDown;
+  function setHeld(k,isDown,source="keyboard"){
+    if(!Object.prototype.hasOwnProperty.call(keys,k))return;
+    const channel=source==="touch"?touchHeld:keyboardHeld;
+    channel[k]=!!isDown;
+    const held=keyboardHeld[k]||touchHeld[k];
+    if(k==="jump"&&held&&!keys.jump)jump();
+    keys[k]=held;
   }
   function mapped(code){
     if(["ArrowLeft","KeyA"].includes(code))return "left";
@@ -246,16 +252,26 @@
   window.addEventListener("keyup",e=>{
     const k=mapped(e.code);if(!k)return;e.preventDefault();setHeld(k,false);
   });
-  function releaseAll(){for(const k of Object.keys(keys))keys[k]=false;}
-  window.addEventListener("blur",()=>{releaseAll();if(mode==="playing")display("pause");});
-  document.addEventListener("visibilitychange",()=>{if(document.hidden&&mode==="playing")display("pause");});
-  document.querySelectorAll("[data-control]").forEach(button=>{
-    const k=button.dataset.control;
-    button.addEventListener("pointerdown",e=>{
-      e.preventDefault();button.setPointerCapture(e.pointerId);setHeld(k,true);
-    });
-    for(const ev of ["pointerup","pointercancel","lostpointercapture"]){
-      button.addEventListener(ev,e=>{e.preventDefault();setHeld(k,false);});
+  const touchController=window.CoastTouch.create(
+    document.querySelectorAll("[data-control]"),
+    (action,held)=>setHeld(action,held,"touch")
+  );
+  function releaseAll(){
+    for(const k of Object.keys(keys)){
+      keyboardHeld[k]=false;
+      touchHeld[k]=false;
+      keys[k]=false;
+    }
+    touchController.clear();
+  }
+  window.addEventListener("blur",()=>{
+    releaseAll();
+    if(mode==="playing")display("pause");
+  });
+  document.addEventListener("visibilitychange",()=>{
+    if(document.hidden){
+      releaseAll();
+      if(mode==="playing")display("pause");
     }
   });
   overlay.addEventListener("click",e=>{
@@ -265,7 +281,7 @@
     if(action==="menu")display("menu");
     if(action==="resume")resume();
   });
-  function resume(){releaseAll();mode="playing";overlay.classList.add("hidden");hud.classList.remove("hidden");last=performance.now();}
+  function resume(){releaseAll();mode="playing";playArea.classList.add("controls-live");overlay.classList.add("hidden");hud.classList.remove("hidden");last=performance.now();}
   document.getElementById("pause").addEventListener("click",()=>{if(mode==="playing")display("pause");});
   document.getElementById("reset").addEventListener("click",()=>reset());
   canvas.setAttribute("tabindex","0");
