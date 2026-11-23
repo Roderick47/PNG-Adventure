@@ -18,5 +18,9 @@ jobs:
           node --check src/level.js
           node --check src/art.js
           node --check src/game.js
+          node --check coast/player/character.js
+          node --check coast/player/workshop.js
+          node --check coast/sprites.js
+          node --check coast/game.js
       - name: Run game rules tests
         run: npm test
