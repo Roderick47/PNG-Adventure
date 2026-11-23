@@ -71,6 +71,8 @@ test("sprites instantiate, stage boots, moves both ways, jumps and pauses",()=>{
  assert.ok(window.CoastController);
  assert.ok(window.CoastAnimator);
  assert.ok(window.CoastSprites);
+ vm.runInContext(fs.readFileSync(path.join(root,"coast","input","touch.js"),"utf8"),sandbox);
+ assert.ok(window.CoastTouch);
  vm.runInContext(fs.readFileSync(path.join(root,"coast","game.js"),"utf8"),sandbox);
  assert.match(element("overlay").innerHTML,/STILT VILLAGE/);
  listeners["overlay:click"]({target:{closest(){return {dataset:{action:"play"}}}}});
