@@ -14,48 +14,13 @@
     const g=c.getContext("2d");g.imageSmoothingEnabled=false;draw(g);
     return c;
   }
-  function buildPlayer(action,frame){
-    return createSprite(32,48,g=>{
-      const run=action==="run",crouch=action==="crouch";
-      const hop=run?(frame%4===0?-2:frame%4===2?2:0):0;
-      if(crouch){
-        pixel(g,6,30,22,7,P.ink);pixel(g,7,27,19,7,P.red);
-        pixel(g,16,19,13,12,P.skin);
-        pixel(g,15,15,14,7,P.hair);pixel(g,25,23,2,2,P.ink);
-        pixel(g,3,35,13,5,P.ink);pixel(g,18,35,13,5,P.ink);
-        return;
-      }
-      // Two-frame jumping posture, four-frame running cycle, idle breath.
-      const airborne=action==="jump"||action==="fall";
-      const legs=run?(frame%2===0?4:-4):airborne?(action==="jump"?-3:2):0;
-      pixel(g,9+legs,35,6,10,P.ink);pixel(g,18-legs,35,6,10,P.ink);
-      pixel(g,6+legs,43,12,4,P.cream);pixel(g,17-legs,43,12,4,P.cream);
-      const bodyY=21+hop;
-      pixel(g,7,bodyY,19,16,P.ink);
-      pixel(g,9,bodyY+1,16,13,P.red);
-      pixel(g,11,bodyY+2,11,3,P.redLight);
-      pixel(g,10,bodyY+11,15,3,P.teal);
-      const arm=run?(frame%2===0?3:-3):airborne?-2:0;
-      pixel(g,3,bodyY+4+arm,6,12,P.skin);
-      pixel(g,25,bodyY+4-arm,6,12,P.skin);
-      pixel(g,13,7+hop,13,15,P.skin);
-      pixel(g,11,5+hop,17,7,P.hair);
-      pixel(g,12,9+hop,3,5,P.hair);
-      pixel(g,15,15+hop,2,2,P.ink);
-      pixel(g,23,15+hop,2,2,P.ink);
-      pixel(g,19,19+hop,4,1,P.woodDark);
-      pixel(g,11,20+hop,16,2,P.skinLight);
-      pixel(g,21,27+hop,8,8,P.gold);
-      pixel(g,23,28+hop,3,2,P.cream);
-      if(action==="hurt"){
-        pixel(g,12,13,4,2,P.cream);pixel(g,21,13,4,2,P.cream);
-      }
-      if(action==="victory"){
-        pixel(g,3,bodyY-7,6,13,P.skin);
-        pixel(g,25,bodyY-7,6,13,P.skin);
-      }
-    });
-  }
+  // Phase 2.1 character atlas is prepared by coast/player/character.js.
+  // The older block-style player generator is intentionally retired.
+  const boy=root.CoastBoy;
+  if(!boy)throw new Error("CoastBoy module must load before CoastSprites");
+  const boyAtlas=boy.createAtlas((w,h)=>{
+    const c=document.createElement("canvas");c.width=w;c.height=h;return c;
+  });
   function buildCrab(frame){
     return createSprite(28,20,g=>{
       pixel(g,7,8,15,9,P.ink);pixel(g,8,7,13,8,"#e67d5d");
@@ -92,16 +57,15 @@
     });
   }
   function prepare(){
-    for(const action of ["idle","run","jump","fall","crouch","hurt","victory"]){
-      atlas[action]=Array.from({length:action==="run"?4:action==="idle"?2:2},(_,i)=>buildPlayer(action,i));
-    }
+    for(const action of Object.keys(boy.FRAME_COUNTS))atlas[action]=boyAtlas[action];
     atlas.crab=[buildCrab(0),buildCrab(1)];
     atlas.fish=[buildFish(0),buildFish(1)];
     atlas.coin=Array.from({length:4},(_,i)=>buildCoin(i));
   }
   function sprite(g,name,frame,x,y,w,h,flip=false){
     const sheet=atlas[name]||atlas.idle;
-    const im=sheet[Math.abs(Math.floor(frame))%sheet.length];
+    const n=((Math.floor(frame)%sheet.length)+sheet.length)%sheet.length;
+    const im=sheet[n];
     g.save();g.imageSmoothingEnabled=false;
     if(flip){g.translate(x+w,0);g.scale(-1,1);x=0;}
     g.drawImage(im,Math.round(x),Math.round(y),Math.round(w),Math.round(h));
@@ -192,5 +156,5 @@
     pixel(g,0,535,960,5,"#266f82");
   }
   prepare();
-  root.CoastSprites={sprite,house,palm,boat,plank,background,colors:P};
+  root.CoastSprites={sprite,house,palm,boat,plank,background,colors:P,playerManifest:boy.FRAME_COUNTS,playerOrigin:boy.ORIGIN};
 })(typeof window!=="undefined"?window:globalThis);
