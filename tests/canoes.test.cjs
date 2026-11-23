@@ -67,9 +67,9 @@ test("riding a canoe maintains a stable foot-height deck and carries the player"
 
 test("landing on an arriving canoe works from above while descending",()=>{
  const {manager,player,controller}=setup([{
-  id:"ferry",minX:500,maxX:520,w:108,y:442,speed:20,phase:0
+  id:"ferry",minX:465,maxX:480,w:108,y:442,speed:20,phase:0
  }]);
- controller.reset(550,360);
+ controller.reset(515,360);
  player.grounded=false;player.vy=50;
  let reached=false;
  for(let i=0;i<100;i++){
