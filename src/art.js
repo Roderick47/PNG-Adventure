@@ -190,7 +190,7 @@
   function drawRunner(c,o) {
     const x=o.x,y=o.footY,sliding=o.slide>0,airborne=!o.grounded;
     if(o.immunity>0 && Math.floor(o.immunity*12)%2===0)return;
-    ellipse(c,x,FLOOR+3,airborne?16:28,6,"#223a3a66");
+    ellipse(c,x,(o.grounded && y < FLOOR - 12 ? y : FLOOR)+3,airborne?16:28,6,"#223a3a66");
     const shirt=o.shirt||"#e84d47",t=o.stride||0,swing=airborne?.28:Math.sin(t)*.75;
     c.save();c.translate(x,y);
     if(sliding){
