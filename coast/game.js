@@ -14,7 +14,8 @@
   let mode="menu",camera=0,clock=0,runTime=0,last=0,coins=[],crabs=[],fish=[],collected=0,hearts=3;
   let checkpoint=false,invulnerable=0,waterSplash=0,fx=[],best=null,lastSafe={x:83,feet:L.FLOOR};
   const p={x:83,feet:L.FLOOR,vx:0,vy:0,grounded:true,climbing:false,face:1,crouch:false,anim:0,coyote:0,buffer:0};
-  const controller=window.CoastController.create(L,p);
+  const platforms=window.CoastPlatforms.create();
+  const controller=window.CoastController.create(L,p,undefined,platforms);
   try{best=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");}catch(_){}
   function saveBest(){
     if(!best||runTime<best.time||runTime===best.time&&collected>best.coins){
@@ -23,6 +24,7 @@
     }
   }
   function reset(){
+    platforms.reset();
     controller.reset();p.anim=0;
     animator.reset();
     camera=0;clock=0;runTime=0;hearts=3;checkpoint=false;invulnerable=0;collected=0;fx=[];
