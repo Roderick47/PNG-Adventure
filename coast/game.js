@@ -216,11 +216,11 @@
     let action="idle";
     if(p.crouch)action="crouch";
     else if(!p.grounded&&!p.climbing)action=p.vy<0?"jump":"fall";
-    else if(p.climbing)action="run";
+    else if(p.climbing)action="climb";
     else if(keys.left||keys.right)action="run";
     const flashInv=invulnerable>0&&Math.floor(invulnerable*10)%2===0;
     if(!flashInv){
-      S.sprite(g,action,p.anim,p.x-22,p.feet-(p.crouch?50:64),44,p.crouch?50:64,p.face<0);
+      S.sprite(g,action,p.anim*(window.CoastBoy.FRAME_FPS[action]/9),p.x-22,p.feet-(p.crouch?50:64),44,p.crouch?50:64,p.face<0);
     }
     g.restore();
     if(mode==="playing"&&p.x<400){

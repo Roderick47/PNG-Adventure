@@ -83,3 +83,10 @@ If you already created a Render Web Service for this project, you can create a r
 2. Optimize artwork, sprite animation, music and mobile performance.
 3. Add PNG-inspired levels with distinctive scenery, then player profiles and server-verified scores.
 4. Evaluate ads/sponsorships only after confirming regular gameplay and legal compliance.
+
+
+## Phase 2.1 — Character Sprite Redesign
+
+Stilt Village now uses an original, hand-posed **48x64 pixel-art boy** generated into cached offscreen canvases in `coast/player/character.js`. All frames share a bottom-centre pivot at (24,64). Collision physics are unchanged.
+
+Open `/coast/player/` to inspect, scrub, pause and flip the 12 pose groups (idle, run, takeoff, rise, apex, fall, land, crouch, crouchIdle, climb, hurt, victory). Phase 2.2 will connect the distinct transition animations to the gameplay state machine. The old 32x48 player generator is retired. Existing enemies, scenery and saves remain intact.
