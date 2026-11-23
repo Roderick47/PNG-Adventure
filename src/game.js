@@ -2,6 +2,8 @@
 (function () {
   "use strict";
   const C = window.PNGameCore;
+  const L = window.PNLevel;
+  const A = window.PNArt;
   const canvas = document.getElementById("game");
   const ctx = canvas.getContext("2d");
   const overlay = document.getElementById("overlay");
@@ -15,9 +17,10 @@
   const soundButton = document.getElementById("sound-toggle");
   const W = 960, H = 540, FLOOR = 431;
   const KEY = "png-adventure-save-v2";
-  const player = { x: 183, rise: 0, velocity: 0, slide: 0, stride: 0 };
+  const player = { x: 183, footY: FLOOR, vy: 0, grounded: true, coyote: 0, jumpBuffer: 0, slide: 0, stride: 0 };
   let state = "menu", save = load(), muted = false, audio = null, lastFrame = 0;
-  let objects = [], particles = [], elapsed = 0, speed = 320, distance = 0;
+  let objects = [], platforms = [], particles = [], elapsed = 0, speed = 320, distance = 0;
+  let zone = 0, nextPlatform = 3.6;
   let coins = 0, score = 0, hearts = 3, immunity = 0, nextSpawn = 1.55;
   let scenery = 0, toastDeadline = 0, resultCommitted = false;
 
@@ -70,6 +73,7 @@
     coinsEl.textContent = "● " + number(coins);
     heartsEl.textContent = ("♥ ".repeat(hearts) + "♡ ".repeat(3 - hearts)).trim();
     heartsEl.setAttribute("aria-label", hearts + " of 3 hearts");
+    document.getElementById("area").textContent = L.ZONES[zone].label;
   }
   function menu() {
     state = "menu";
@@ -115,11 +119,14 @@
       actionButton("▶ PLAY NOW", "start", "primary") + actionButton("← MENU", "menu") + "</div>");
   }
   function start() {
-    objects = []; particles = []; elapsed = 0; speed = 320; distance = 0;
+    objects = []; platforms = []; particles = []; elapsed = 0; speed = 320; distance = 0;
     coins = 0; score = 0; hearts = 3; immunity = 0; nextSpawn = 1.3;
-    player.rise = 0; player.velocity = 0; player.slide = 0; player.stride = 0;
+    nextPlatform = 3.4; zone = 0;
+    player.footY = FLOOR; player.vy = 0; player.grounded = true;
+    player.coyote = 0; player.jumpBuffer = 0; player.slide = 0; player.stride = 0;
     resultCommitted = false; state = "running";
     hudUpdate(); conceal(); visibleGame(true);
+    toastMessage("WELCOME TO GORDONS MARKET");
   }
   function pause() {
     if (state !== "running") return;
@@ -150,13 +157,21 @@
       actionButton("↗ SHARE SCORE", "share") + actionButton("★ OUTFITS", "locker") +
       actionButton("MENU", "menu") + '</div>');
   }
+  function performJump() {
+    player.vy = -790; player.grounded = false; player.coyote = 0;
+    player.jumpBuffer = 0; player.slide = 0;
+    effect("jump");
+    burst(player.x, player.footY - 6, "#f0d6a2", 5);
+  }
   function jump() {
-    if (state !== "running" || player.rise > 0 || player.slide > 0) return;
-    player.velocity = 770; effect("jump");
+    if (state !== "running") return;
+    player.jumpBuffer = .13;
+    if (player.grounded || player.coyote > 0) performJump();
   }
   function slide() {
-    if (state !== "running" || player.rise > 0) return;
-    player.slide = .72;
+    if (state !== "running" || !player.grounded) return;
+    player.slide = .69;
+    burst(player.x - 20, player.footY - 4, "#ead4ac", 3);
   }
   function spawn() {
     const type = C.obstacleKind(elapsed, Math.random());
@@ -168,6 +183,16 @@
       objects.push({ type: "coin", x: x + 140 + i * 38, y: coinY - (i === 1 ? 15 : 0), width: 20, hit: false });
     }
   }
+  function spawnPlatform() {
+    const p = L.makePlatform(W + 40, elapsed, Math.random());
+    platforms.push(p);
+    for (let i = 0; i < 4; i++) {
+      objects.push({
+        type: "coin", x: p.x + 43 + i * 48,
+        y: p.y - 27 - (i === 2 ? 17 : 0), width: 20, hit: false
+      });
+    }
+  }
   function burst(x, y, color, count) {
     for (let i = 0; i < count; i++) {
       particles.push({ x, y, vx: (Math.random() - .5) * 180, vy: -Math.random() * 180,
@@ -177,7 +202,7 @@
   function damage() {
     if (immunity > 0 || state !== "running") return;
     hearts--; immunity = 1.5; effect("hit");
-    burst(player.x, FLOOR - player.rise - 40, "#ff6262", 9);
+    burst(player.x, player.footY - 40, "#ff6262", 9);
     if (hearts <= 0) finish();
     else toastMessage(hearts + (hearts === 1 ? " HEART LEFT!" : " HEARTS LEFT!"));
   }
