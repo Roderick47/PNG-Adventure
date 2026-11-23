@@ -82,7 +82,8 @@
       '<h1>PNG <span>ADVENTURE</span></h1>' +
       '<p>Run through Moresby, jump over hazards, collect kina coins and chase your personal best. How far can you go?</p>' +
       '<div class="actions">' +
-      actionButton("▶ START RUN", "start", "primary") +
+      '<a class="btn primary" href="./coast/">🌊 PLAY STILT VILLAGE</a>' +
+      actionButton("▶ ORIGINAL RUNNER", "start") +
       actionButton("★ OUTFITS", "locker") +
       actionButton("? HOW TO PLAY", "how") + '</div>' +
       '<div class="stats"><div class="stat"><small>PERSONAL BEST</small><strong>' + number(save.best) + ' PTS</strong></div>' +
