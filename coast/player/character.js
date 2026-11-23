@@ -103,7 +103,7 @@
     px(leftX+1,leftY+7,4,4,P.skinLight);
     px(rightX+1,rightY+7,4,4,P.skinLight);
     // Head with rounded outline, ears, cheek and clear eye direction (right-facing).
-    const faceY=crouched?18-crouchPhase:8-bodyShift;
+    const faceY=crouched?18-crouchPhase:13-bodyShift;
     px(14,faceY+3,23,24,P.outline);
     px(12,faceY+9,3,9,P.outline);px(37,faceY+9,3,9,P.outline);
     px(16,faceY+5,19,19,P.skinShadow);
