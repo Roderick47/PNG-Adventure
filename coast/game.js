@@ -2,6 +2,7 @@
 (function () {
   "use strict";
   const L=window.CoastLevel,S=window.CoastSprites;
+  const animator=window.CoastAnimator.create(window.CoastBoy);
   const canvas=document.getElementById("scene"),g=canvas.getContext("2d");
   const overlay=document.getElementById("overlay"),hud=document.getElementById("hud");
   const health=document.getElementById("hearts"),coinsEl=document.getElementById("coins"),timeEl=document.getElementById("timer");
@@ -20,6 +21,7 @@
   }
   function reset(){
     p.x=83;p.feet=L.FLOOR;p.vy=0;p.grounded=true;p.climbing=false;p.coyote=0;p.buffer=0;p.crouch=false;
+    animator.reset();
     camera=0;clock=0;runTime=0;hearts=3;checkpoint=false;invulnerable=0;collected=0;fx=[];
     lastSafe={x:83,feet:L.FLOOR};
     coins=L.coinGroups.map(([x,y])=>({x,y,taken:false}));
@@ -76,6 +78,7 @@
     hearts--;invulnerable=1.4;
     burst(p.x,p.feet-25,"#ffe0a7",12);
     updateHud();
+    animator.trigger("hurt");
     if(hearts<=0){display("over");return;}
     const spawn=checkpoint?{x:L.checkpoint.x,feet:390}:lastSafe;
     p.x=spawn.x;p.feet=spawn.feet;p.vy=0;p.climbing=false;p.grounded=true;
@@ -86,6 +89,7 @@
     p.buffer=.12;
     if(p.grounded||p.coyote>0){
       p.vy=-525;p.grounded=false;p.climbing=false;p.coyote=0;p.buffer=0;
+      animator.trigger("takeoff");
       burst(p.x,p.feet-3,"#f2dbaa",7);
     }
   }
@@ -129,7 +133,10 @@
       p.feet+=p.vy*dt;
       const surface=L.landing(prev,p.feet,p.x,29);
       if(p.vy>=0&&surface){
-        if(!wasGrounded&&p.feet-surface.y>1)burst(p.x,surface.y,"#e4c591",5);
+        if(!wasGrounded&&p.feet-surface.y>1){
+          burst(p.x,surface.y,"#e4c591",5);
+          animator.trigger("land");
+        }
         p.feet=surface.y;p.grounded=true;p.vy=0;
         if(p.buffer>0)jump();
         if(surface.kind==="shore"&&p.x<475)lastSafe={x:p.x,feet:p.feet};
@@ -158,6 +165,7 @@
       if(pose.active&&L.overlap(body,{x:pose.x-13,y:pose.y-10,w:26,h:20})){hurt();return;}
     }
     if(p.x>=L.finish.x&&p.feet<=L.finish.y+10){
+      animator.trigger("victory");
       saveBest();display("win");return;
     }
     for(const v of fx){v.x+=v.vx*dt;v.y+=v.vy*dt;v.vy+=260*dt;v.life-=dt;}
@@ -213,14 +221,10 @@
     rect(finish.x-44,finish.y-103,52,41,"#eedc90");
     g.font="bold 15px monospace";g.fillStyle="#273b44";g.fillText("END",finish.x-38,finish.y-79);
     for(const v of fx)rect(v.x,v.y,5,5,v.color);
-    let action="idle";
-    if(p.crouch)action="crouch";
-    else if(!p.grounded&&!p.climbing)action=p.vy<0?"jump":"fall";
-    else if(p.climbing)action="climb";
-    else if(keys.left||keys.right)action="run";
+    const pose=animator.current();
     const flashInv=invulnerable>0&&Math.floor(invulnerable*10)%2===0;
-    if(!flashInv){
-      S.sprite(g,action,p.anim*(window.CoastBoy.FRAME_FPS[action]/9),p.x-22,p.feet-(p.crouch?50:64),44,p.crouch?50:64,p.face<0);
+    if(!flashInv || pose.action==="victory"){
+      S.sprite(g,pose.action,pose.frame,p.x-22,p.feet-(p.crouch?50:64),44,p.crouch?50:64,p.face<0);
     }
     g.restore();
     if(mode==="playing"&&p.x<400){
@@ -231,7 +235,20 @@
   }
   function loop(now){
     const dt=last?Math.min(.034,(now-last)/1000):0;last=now;
-    update(dt);draw();requestAnimationFrame(loop);
+    update(dt);
+    // Animate after world state updates. Paused/game-over poses freeze; a stage
+    // victory continues celebrating behind its results overlay.
+    if(mode==="playing"||mode==="win"){
+      animator.update({
+        grounded:p.grounded,
+        velocityY:p.vy,
+        moving:(keys.left!==keys.right),
+        crouching:p.crouch,
+        climbing:p.climbing,
+        victorious:mode==="win"
+      },dt);
+    }
+    draw();requestAnimationFrame(loop);
   }
   function setHeld(k,isDown){
     if(k==="jump"){

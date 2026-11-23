@@ -19,6 +19,7 @@ jobs:
           node --check src/art.js
           node --check src/game.js
           node --check coast/player/character.js
+          node --check coast/player/animator.js
           node --check coast/player/workshop.js
           node --check coast/sprites.js
           node --check coast/game.js
