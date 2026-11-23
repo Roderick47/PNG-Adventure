@@ -13,6 +13,7 @@
 <script src="./sprites.js" defer></script>
 <script src="./player/animator.js" defer></script>
 <script src="./player/controller.js" defer></script>
+<script src="./input/touch.js" defer></script>
 <script src="./game.js" defer></script>
 </head>
 <body>
@@ -25,25 +26,27 @@
   <main>
     <a href="./player/" class="back" style="display:inline-block;margin-bottom:10px">★ Character Workshop</a>
     <div class="stage-label"><span class="chip">01</span><div><h1>STILT VILLAGE</h1><p>Across the lagoon · pixel platform adventure</p></div></div>
-    <div class="game-shell">
-      <canvas id="scene" width="960" height="540" aria-label="Playable coastal village platforming stage"></canvas>
-      <div id="hud" class="hud hidden">
-        <div class="stat"><span>HEALTH</span><strong id="hearts">♥ ♥ ♥</strong></div>
-        <div class="stat"><span>SEA TOKENS</span><strong id="coins">◆ 0</strong></div>
-        <div class="stat"><span>TIME</span><strong id="timer">0:00</strong></div>
-        <button type="button" id="pause" class="pause-btn" aria-label="Pause the game">Ⅱ</button>
-      </div>
-      <div id="status" class="status" role="status"></div>
-      <div class="touch" aria-label="Mobile game controls">
-        <div class="dpad">
-          <button data-control="left" aria-label="Move left">◀</button>
-          <button data-control="right" aria-label="Move right">▶</button>
-          <button data-control="up" aria-label="Climb up">▲</button>
-          <button data-control="down" aria-label="Crouch or climb down">▼</button>
+    <div class="play-area">
+      <div class="game-shell">
+        <canvas id="scene" width="960" height="540" aria-label="Playable coastal village platforming stage"></canvas>
+        <div id="hud" class="hud hidden">
+          <div class="stat"><span>HEALTH</span><strong id="hearts">♥ ♥ ♥</strong></div>
+          <div class="stat"><span>SEA TOKENS</span><strong id="coins">◆ 0</strong></div>
+          <div class="stat"><span>TIME</span><strong id="timer">0:00</strong></div>
+          <button type="button" id="pause" class="pause-btn" aria-label="Pause the game">Ⅱ</button>
         </div>
-        <button class="jump-btn" data-control="jump" aria-label="Jump">JUMP <span>●</span></button>
+        <div id="status" class="status" role="status"></div>
+        <div id="overlay" class="overlay"></div>
       </div>
-      <div id="overlay" class="overlay"></div>
+      <div class="touch" role="group" aria-label="Touch game controls">
+        <div class="dpad" role="group" aria-label="Movement controls">
+          <button type="button" data-control="up" aria-label="Climb up" aria-pressed="false">▲</button>
+          <button type="button" data-control="left" aria-label="Move left" aria-pressed="false">◀</button>
+          <button type="button" data-control="down" aria-label="Crouch or climb down" aria-pressed="false">▼</button>
+          <button type="button" data-control="right" aria-label="Move right" aria-pressed="false">▶</button>
+        </div>
+        <button type="button" class="jump-btn" data-control="jump" aria-label="Jump" aria-pressed="false"><span>JUMP</span><span class="jump-arrow" aria-hidden="true">↑</span></button>
+      </div>
     </div>
     <div class="below">
       <div class="controls-hint"><span>◀ ▶</span> MOVE <span>SPACE</span> JUMP <span>↓</span> CROUCH <span>↑ ↓</span> CLIMB LADDERS</div>
