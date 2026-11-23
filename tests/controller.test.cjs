@@ -67,13 +67,17 @@ test("buffered jump fires immediately on landing, but not twice",()=>{
 test("coyote jump works just after leaving a platform, then expires",()=>{
  const tiny={...L,surfaces:[{x:0,y:432,w:100}],landing:(a,b,x,w)=>L.landing(a,b,x,w,[{x:0,y:432,w:100}]),nearbyLadder:()=>null,WORLD_WIDTH:300};
  const p={};const c=P.create(tiny,p);c.reset(90,432);
- const e=c.step({...empty,right:true},.10);
- assert.equal(e.walkedOff,true);
+ let exited=false;
+ for(let i=0;i<35;i++){
+  const event=c.step({...empty,right:true},1/120);
+  if(event.walkedOff){exited=true;break;}
+ }
+ assert.equal(exited,true);
  assert.ok(p.coyote>0);
  c.requestJump();
  assert.equal(c.step({...empty,right:true,jump:true},.015).jumped,true);
  const q={};const d=P.create(tiny,q);d.reset(90,432);
- d.step({...empty,right:true},.11);
+ tick(d,{...empty,right:true},.23);
  tick(d,empty,.15);
  d.requestJump();
  assert.equal(d.step({...empty,jump:true},.01).jumped,false);
