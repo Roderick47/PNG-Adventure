@@ -43,3 +43,6 @@ h1{font-size:clamp(39px,7.3vw,84px)}h1 span{display:block;color:var(--gold)}h2{f
 .control:active{transform:translateY(2px);box-shadow:0 2px 0 #0b2b37b0}
 .hud-group b,.stat strong{font-variant-numeric:tabular-nums}
 @media(max-width:660px){.area-name{font-size:8px;letter-spacing:.04em}.panel{padding-inline:8px}.panel .stats,.result-row{padding-top:7px}}
+
+/* Coastal stage entry is a real link, styled like the existing action buttons. */
+a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
