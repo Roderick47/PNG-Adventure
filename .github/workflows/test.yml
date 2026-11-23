@@ -21,6 +21,7 @@ jobs:
           node --check coast/player/character.js
           node --check coast/player/animator.js
           node --check coast/player/controller.js
+          node --check coast/input/touch.js
           node --check coast/player/workshop.js
           node --check coast/sprites.js
           node --check coast/game.js
