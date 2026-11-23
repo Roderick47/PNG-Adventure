@@ -90,3 +90,8 @@ If you already created a Render Web Service for this project, you can create a r
 Stilt Village now uses an original, hand-posed **48x64 pixel-art boy** generated into cached offscreen canvases in `coast/player/character.js`. All frames share a bottom-centre pivot at (24,64). Collision physics are unchanged.
 
 Open `/coast/player/` to inspect, scrub, pause and flip the 12 pose groups (idle, run, takeoff, rise, apex, fall, land, crouch, crouchIdle, climb, hurt, victory). Phase 2.2 will connect the distinct transition animations to the gameplay state machine. The old 32x48 player generator is retired. Existing enemies, scenery and saves remain intact.
+
+
+## Phase 2.2 — Event-driven animation
+
+Stilt Village now uses `coast/player/animator.js`, an independently tested deterministic state machine with timing based on `CoastBoy.FRAME_COUNTS` and `CoastBoy.FRAME_FPS`. It selects idle/run/crouch/climb/airborne frames from player movement and plays explicit takeoff, land, hurt and victory events with interruption priorities. The existing platform collision, player control, level, save and reward mechanics are unchanged. Animation is frame-rate-independent, freezes on pause and continues celebrating at victory. Dedicated tests live in `tests/animator.test.cjs`.
