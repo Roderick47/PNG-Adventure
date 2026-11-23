@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="PNG Adventure">
+  <defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#4eaac0"/><stop offset="1" stop-color="#ace0b9"/></linearGradient></defs>
+  <rect width="512" height="512" rx="102" fill="#142f3d"/>
+  <rect x="26" y="26" width="460" height="460" rx="84" fill="url(#sky)"/>
+  <circle cx="382" cy="132" r="50" fill="#ffda79"/>
+  <path d="M27 334 160 196 241 272 326 166 485 346V404H27Z" fill="#467f76"/>
+  <path d="M27 373 191 262 309 346 395 283 485 348V436H27Z" fill="#2e6c64"/>
+  <rect x="27" y="401" width="458" height="85" fill="#926447"/>
+  <path d="m139 298 31-92 31 92h-28v43h-9v-43z" fill="#f8d36e"/>
+  <text x="256" y="427" text-anchor="middle" fill="#fff6df" font-size="124" font-family="Arial, sans-serif" font-weight="900" letter-spacing="-7">PNG</text>
+  <path d="M105 449h302" stroke="#ffd36c" stroke-width="12" stroke-linecap="round"/>
+</svg>

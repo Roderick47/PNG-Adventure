@@ -1,0 +1,19 @@
+{
+  "name": "PNG Adventure: Moresby Run",
+  "short_name": "PNG Adventure",
+  "description": "A free Papua New Guinea-inspired endless platform runner",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#12252f",
+  "theme_color": "#12252f",
+  "icons": [
+    {
+      "src": "./assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
