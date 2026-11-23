@@ -67,6 +67,8 @@ test("sprites instantiate, stage boots, moves both ways, jumps and pauses",()=>{
  assert.ok(window.CoastBoy);
  vm.runInContext(fs.readFileSync(path.join(root,"coast","sprites.js"),"utf8"),sandbox);
  vm.runInContext(fs.readFileSync(path.join(root,"coast","player","animator.js"),"utf8"),sandbox);
+ vm.runInContext(fs.readFileSync(path.join(root,"coast","player","controller.js"),"utf8"),sandbox);
+ assert.ok(window.CoastController);
  assert.ok(window.CoastAnimator);
  assert.ok(window.CoastSprites);
  vm.runInContext(fs.readFileSync(path.join(root,"coast","game.js"),"utf8"),sandbox);
