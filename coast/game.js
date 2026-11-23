@@ -11,7 +11,6 @@
   let mode="menu",camera=0,clock=0,runTime=0,last=0,coins=[],crabs=[],fish=[],collected=0,hearts=3;
   let checkpoint=false,invulnerable=0,waterSplash=0,fx=[],best=null,lastSafe={x:83,feet:L.FLOOR};
   const p={x:83,feet:L.FLOOR,vy:0,grounded:true,climbing:false,face:1,crouch:false,anim:0,coyote:0,buffer:0};
-  const pressed={};
   try{best=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");}catch(_){}
   function saveBest(){
     if(!best||runTime<best.time||runTime===best.time&&collected>best.coins){
@@ -221,7 +220,7 @@
     else if(keys.left||keys.right)action="run";
     const flashInv=invulnerable>0&&Math.floor(invulnerable*10)%2===0;
     if(!flashInv){
-      S.sprite(g,action,p.anim,p.x-22,p.feet-63,p.crouch?44:44,p.crouch?50:64,p.face<0);
+      S.sprite(g,action,p.anim,p.x-22,p.feet-(p.crouch?50:64),44,p.crouch?50:64,p.face<0);
     }
     g.restore();
     if(mode==="playing"&&p.x<400){
