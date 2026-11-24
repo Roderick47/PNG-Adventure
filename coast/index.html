@@ -17,6 +17,8 @@
 <script src="./environment/vegetation.js" defer></script>
 <script src="./environment/wildlife.js" defer></script>
 <script src="./environment/feedback.js" defer></script>
+<script src="./environment/render-budget.js" defer></script>
+<script src="./audio/sound.js" defer></script>
 <script src="./player/animator.js" defer></script>
 <script src="./player/controller.js" defer></script>
 <script src="./world/platforms.js" defer></script>
@@ -43,7 +45,7 @@
           <div class="stat"><span>HEALTH</span><strong id="hearts">♥ ♥ ♥</strong></div>
           <div class="stat"><span>SEA TOKENS</span><strong id="coins">◆ 0</strong></div>
           <div class="stat"><span>TIME</span><strong id="timer">0:00</strong></div>
-          <button type="button" id="pause" class="pause-btn" aria-label="Pause the game">Ⅱ</button>
+          <div class="hud-actions"><button type="button" id="audio" class="audio-btn" aria-label="Mute game sound" aria-pressed="true">♪ ON</button><button type="button" id="pause" class="pause-btn" aria-label="Pause the game">Ⅱ</button></div>
         </div>
         <div id="status" class="status" role="status"></div>
         <div id="overlay" class="overlay"></div>
