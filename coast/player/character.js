@@ -145,7 +145,7 @@
   });
   const atlasURL=typeof document!=="undefined"&&document.currentScript
     ? new URL("../../assets/player/atlas.png",document.currentScript.src).href:null;
-  function loadExternalAtlas(atlas){
+  function loadExternalAtlas(atlas,onReady){
     if(!atlasURL||typeof Image==="undefined")return;
     // A valid image replaces the existing canvases in place; consumers can retain references.
     const image=new Image();
@@ -166,10 +166,11 @@
             24+(crop.x-48)*scale,62+(crop.y-108)*scale,crop.w*scale,crop.h*scale);
         });
       }
+      if(typeof onReady==="function")onReady();
     };
     image.src=atlasURL;
   }
-  function createAtlas(createCanvas){
+  function createAtlas(createCanvas,onReady){
     if(typeof createCanvas!=="function")throw new TypeError("createCanvas required");
     const atlas=Object.create(null);
     for(const [action,count] of Object.entries(FRAME_COUNTS)){
@@ -182,7 +183,7 @@
         return cv;
       });
     }
-    loadExternalAtlas(atlas);
+    loadExternalAtlas(atlas,onReady);
     return atlas;
   }
   function draw(ctx,atlas,action,index,x,feet,scale=1,flip=false){
