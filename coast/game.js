@@ -3,6 +3,7 @@
   "use strict";
   const L=window.CoastLevel,S=window.CoastSprites;
   const water=window.CoastWater.create();
+  const feedback=window.CoastFeedback.create();
   const parallax=window.CoastParallax;
   const reduceMotion=typeof window.matchMedia==="function"&&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -32,6 +33,7 @@
     }
   }
   function reset(){
+    feedback.reset();
     water.reset();
     platforms.reset();
     controller.reset();p.anim=0;
@@ -95,6 +97,7 @@
     const damage=invulnerable<=0;
     if(damage){
       hearts--;invulnerable=1.4;
+      feedback.emit("danger",p.x,p.feet-31);
       burst(p.x,p.feet-25,"#ffe0a7",12);
       updateHud();
       animator.trigger("hurt");
@@ -114,16 +117,22 @@
     clock+=dt;
     if(mode!=="playing")return;
     water.advance(dt);
+    feedback.advance(dt);
     runTime+=dt;
     invulnerable=Math.max(0,invulnerable-dt);
     const wasOnCanoe=typeof p.supportId==="string"&&p.supportId.startsWith("canoe-");
     const movement=controller.step(keys,dt);
     if(movement.jumped&&wasOnCanoe)water.splash(p.x,L.WATER_Y+5,"canoe");
     if(movement.jumped){
+      feedback.emit(wasOnCanoe?"canoe":"jump",p.x,p.feet);
       animator.trigger("takeoff");
       burst(p.x,p.feet-3,"#f2dbaa",7);
     }
     if(movement.landed){
+      const landType=typeof p.supportId==="string"&&p.supportId.startsWith("canoe-")?"canoe":
+        typeof p.supportId==="string"&&p.supportId.startsWith("net-")?"net":
+        typeof p.supportId==="string"&&p.supportId.startsWith("plank-")?"wood":"land";
+      feedback.emit(landType,p.x,p.feet);
       if(typeof p.supportId==="string"&&p.supportId.startsWith("canoe-"))water.splash(p.x,L.WATER_Y+5,"canoe");
       burst(p.x,p.feet,"#e4c591",5);
       animator.trigger("land");
@@ -132,12 +141,12 @@
       lastSafe={x:p.x,feet:p.feet};
     }
     if(p.feet>L.WATER_Y+80){water.splash(p.x,L.WATER_Y+7,"fall");hurt(true);return;}
-    if(!checkpoint&&p.x>=L.checkpoint.x){checkpoint=true;flash("CHECKPOINT REACHED!");}
+    if(!checkpoint&&p.x>=L.checkpoint.x){checkpoint=true;feedback.emit("checkpoint",L.checkpoint.x,L.checkpoint.y-26);flash("CHECKPOINT REACHED!");}
     const body={x:p.x-14,y:p.feet-(p.crouch?27:58),w:28,h:p.crouch?27:58};
     for(const coin of coins){
       if(coin.taken)continue;
       if(L.overlap(body,{x:coin.x-9,y:coin.y-10,w:18,h:20})){
-        coin.taken=true;collected++;burst(coin.x,coin.y,"#ffe291",6);updateHud();
+        coin.taken=true;collected++;feedback.emit("collect",coin.x,coin.y);burst(coin.x,coin.y,"#ffe291",6);updateHud();
       }
     }
     for(const crab of crabs){
@@ -234,6 +243,10 @@
     rect(finish.x,finish.y-104,7,104,"#654a37");
     rect(finish.x-44,finish.y-103,52,41,"#eedc90");
     g.font="bold 15px monospace";g.fillStyle="#273b44";g.fillText("END",finish.x-38,finish.y-79);
+    window.CoastFeedback.draw(g,camera,clock,{
+      player:p,surfaces:L.surfaces,breakaways,netClimbs:window.CoastNets.CLIMBS,
+      ladders:L.ladders,coins,checkpoint:L.checkpoint,activated:checkpoint,crabs
+    },feedback.snapshot(),{reducedMotion:reduceMotion});
     for(const v of fx)rect(v.x,v.y,5,5,v.color);
     const pose=animator.current();
     const flashInv=invulnerable>0&&Math.floor(invulnerable*10)%2===0;
