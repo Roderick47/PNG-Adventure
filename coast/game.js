@@ -2,6 +2,9 @@
 (function () {
   "use strict";
   const L=window.CoastLevel,S=window.CoastSprites;
+  const parallax=window.CoastParallax;
+  const reduceMotion=typeof window.matchMedia==="function"&&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const animator=window.CoastAnimator.create(window.CoastBoy);
   const canvas=document.getElementById("scene"),g=canvas.getContext("2d");
   const overlay=document.getElementById("overlay"),hud=document.getElementById("hud");
@@ -157,7 +160,7 @@
   }
   function rect(x,y,w,h,color){g.fillStyle=color;g.fillRect(Math.floor(x),Math.floor(y),Math.ceil(w),Math.ceil(h));}
   function draw(){
-    S.background(g,camera,clock);
+    parallax.draw(g,camera,clock,S,{reducedMotion:reduceMotion});
     g.save();g.translate(-Math.floor(camera),0);g.imageSmoothingEnabled=false;
     for(const h of L.houses){
       // Foreground stilt houses add recognisable village architecture to the platform layer.
