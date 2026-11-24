@@ -33,6 +33,7 @@ jobs:
           node --check coast/environment/village.js
           node --check coast/environment/vegetation.js
           node --check coast/environment/wildlife.js
+          node --check coast/environment/feedback.js
           node --check coast/game.js
       - name: Run game rules tests
         run: npm test
