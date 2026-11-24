@@ -193,6 +193,42 @@
       pixel(g,bx+w/2-9,by-19,18,3,"#ffe49b");
     }
   }
+  // Suspended fishing-net decks: stable top collision, visual sag below feet.
+  function netDeck(g,p,time){
+    const x=Math.round(p.x),y=Math.round(p.y),w=Math.round(p.w);
+    const sag=Math.round(2+Math.sin(time*2.2+x*.02)*1+
+      Math.max(0,p.pulse||0)/.42*7);
+    pixel(g,x-7,y-6,7,12,"#765039");
+    pixel(g,x+w,y-6,7,12,"#765039");
+    pixel(g,x,y-2,w,4,"#e5c88c");
+    pixel(g,x+3,y+3,w-6,5,"#477f7f");
+    for(let t=0;t<w;t+=12){
+      const drop=sag*(1-Math.abs((t+6)/w*2-1));
+      pixel(g,x+t,y+7+drop,2,10,"#d9be8a");
+      pixel(g,x+t+2,y+12+drop,9,2,"#a5c9a8");
+    }
+    pixel(g,x+6,y+18+sag,w-12,2,"#d8bb85");
+    pixel(g,x-12,y-1,15,2,"#d6b784");
+    pixel(g,x+w-2,y-1,15,2,"#d6b784");
+  }
+  // Vertical net fixed between timber poles; matches the ladder grip region.
+  function climbNet(g,n,time){
+    const x=Math.round(n.x),y=Math.round(n.y),h=Math.round(n.h),w=n.w;
+    pixel(g,x-4,y-5,5,h+11,"#765039");
+    pixel(g,x+w-1,y-5,5,h+11,"#765039");
+    pixel(g,x-5,y-8,w+11,5,"#e1ba7d");
+    pixel(g,x-5,y+h+3,w+11,5,"#e1ba7d");
+    for(let row=0;row<h;row+=12){
+      pixel(g,x,y+row,w,2,"#c8b58b");
+    }
+    for(let col=2;col<w;col+=9){
+      pixel(g,x+col,y,2,h,"#8fbb9b");
+      for(let row=0;row<h;row+=12){
+        pixel(g,x+col-1,y+row,4,4,"#e1d1a1");
+      }
+    }
+    pixel(g,x+12,y+4+Math.round(Math.sin(time*2)*2),5,4,"#7fadaa");
+  }
   function plank(g,x,y,w,kind){
     const shore=kind==="shore",roof=kind==="roof";
     const plankColor=roof?"#a55d49":shore?"#cb9b66":P.woodLight;
@@ -239,5 +275,5 @@
     pixel(g,0,535,960,5,"#266f82");
   }
   prepare();
-  root.CoastSprites={sprite,house,palm,boat,canoePlatform,breakawayPlank,plank,background,colors:P,playerManifest:boy.FRAME_COUNTS,playerOrigin:boy.ORIGIN};
+  root.CoastSprites={sprite,house,palm,boat,canoePlatform,breakawayPlank,netDeck,climbNet,plank,background,colors:P,playerManifest:boy.FRAME_COUNTS,playerOrigin:boy.ORIGIN};
 })(typeof window!=="undefined"?window:globalThis);

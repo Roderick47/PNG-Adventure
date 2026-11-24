@@ -188,3 +188,25 @@ the same bounded physics substeps as the player. Canvas artwork lives in
 safety, restart, canoe compatibility, and 30/60/120-FPS determinism.
 
 Next: Phase 2.4.5 — suspended and climbable fishing nets.
+
+
+## Phase 2.4.5 — Fishing nets
+
+Stilt Village includes two new **suspended fishing-net platforms**, at the first
+and second raised boardwalk crossings. The player lands and jumps on their
+stable one-way collision surfaces. Netting sags briefly on landing, but this
+is visual-only and does not inject unexpected physics impulses. The net pulse
+clears automatically and resets on a fresh run.
+
+Two **climbable fishing nets** run between existing boardwalks and house roofs:
+near world x=1125 (upper y=310, lower y=418) and x=2337
+(upper y=292, lower y=405). Use the ordinary **up/down** controls to climb,
+then **jump** to detach. Climbing reuses the existing ladder movement and
+character animation through a lightweight level adapter; original ladders
+and gameplay physics remain unchanged. The new optional routes are not
+required to finish the stage.
+
+The module `coast/world/nets.js` registers decks and exposes climbing regions;
+`coast/sprites.js` draws woven platforms and net ladders. Tests in
+`tests/nets.test.cjs` cover landings, jump-off, climbing both directions,
+the original ladders, resets, and equivalent physics at 30/60/120 FPS.

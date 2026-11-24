@@ -24,6 +24,7 @@ jobs:
           node --check coast/world/platforms.js
           node --check coast/world/canoes.js
           node --check coast/world/breakaways.js
+          node --check coast/world/nets.js
           node --check coast/input/touch.js
           node --check coast/player/workshop.js
           node --check coast/sprites.js

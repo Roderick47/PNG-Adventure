@@ -1,9 +1,9 @@
 /* Offline caching for this small, fully static prototype. */
-const CACHE = "png-adventure-v0.11";
+const CACHE = "png-adventure-v0.12";
 const ASSETS = [
   "./", "./index.html", "./style.css", "./src/core.js", "./src/level.js", "./src/art.js", "./src/game.js",
   "./manifest.webmanifest", "./assets/icon.svg",
-  "./coast/", "./coast/index.html", "./coast/style.css", "./coast/level.js", "./coast/player/character.js", "./coast/player/animator.js", "./coast/player/controller.js", "./coast/world/platforms.js", "./coast/world/canoes.js", "./coast/world/breakaways.js", "./coast/input/touch.js", "./coast/sprites.js", "./coast/game.js",
+  "./coast/", "./coast/index.html", "./coast/style.css", "./coast/level.js", "./coast/player/character.js", "./coast/player/animator.js", "./coast/player/controller.js", "./coast/world/platforms.js", "./coast/world/canoes.js", "./coast/world/breakaways.js", "./coast/world/nets.js", "./coast/input/touch.js", "./coast/sprites.js", "./coast/game.js",
   "./coast/player/", "./coast/player/index.html", "./coast/player/workshop.js"
 ];
 self.addEventListener("install", function (event) {
