@@ -179,6 +179,7 @@
       if(h.x>camera-240&&h.x<camera+1150)S.house(g,h.x,h.y,h.scale,h.tint);
     }
     window.CoastVillage.draw(g,camera,L.houses);
+    window.CoastWildlife.draw(g,camera,clock,L,{reducedMotion:reduceMotion});
     window.CoastVegetation.draw(g,camera,clock,{reducedMotion:reduceMotion});
     for(const pform of L.surfaces){
       if(pform.x+pform.w<camera-80||pform.x>camera+1040)continue;

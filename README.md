@@ -281,3 +281,29 @@ script ordering, offline cache v0.16 and GitHub JavaScript syntax checks
 are updated. `tests/environment.test.cjs` checks architectural placement,
 fishing props, foliage variety, camera culling, reduced motion and
 unchanged collision/enemy geometry.
+
+
+## Phase 2.5.4 — Ambient wildlife and village life
+
+A dedicated `coast/environment/wildlife.js` module adds non-interactive
+environmental life: small groups of pale birds moving high above the level,
+tiny blue-green fish swimming **under** the lagoon surface, and distant
+silhouettes on selected existing house verandas. They are deliberately
+subdued in size and palette so players can distinguish them from jumping
+hazard fish, crabs, collectibles and interactive surfaces.
+
+The visual elements use authored world positions and fixed mathematical
+animation (no random event spawning or new runtime state). Camera culling
+only draws ambient elements around the visible viewport. The
+`prefers-reduced-motion` setting freezes their wings, swimming and subtle
+veranda movement; no inputs or physics are affected.
+
+Render order: parallax sky, lagoon water, village houses and architecture,
+**ambient life**, decorative vegetation, then all existing gameplay surfaces,
+hazards and the player. All effects are pure Canvas drawing and do not
+register collision geometry or alter existing enemy collections, saves or
+player movement.
+
+`tests/wildlife.test.cjs` checks distinct visual zones, predictable motion,
+camera-culling limits, reduced-motion determinism, house anchoring and
+unchanged gameplay geometry.
