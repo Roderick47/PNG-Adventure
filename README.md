@@ -334,3 +334,36 @@ effects. It is placed in the existing Stage 1 render sequence above game
 props and below the character. `tests/feedback.test.cjs` covers particle
 lifetimes and caps, interactive object cue states, viewport culling,
 reduced-motion behavior, and isolation from collision/enemy geometry.
+
+
+## Phase 2.5.6 — Audio, mobile rendering optimization and final polish
+
+Stilt Village now includes original, **procedurally synthesized Web Audio**:
+soft filtered ocean surf; short cues for jumping, wood/net/canoe landings,
+walking, collectible pickups, checkpoints, damage, splashes, victory, and
+occasional distant bird calls. No sound files, licensed songs, streaming
+assets or additional downloads are required.
+
+The audio engine is lazily initialized **only after a player gesture**
+(Start/Play Again/Resume/Restart/Unmute). It supports browsers without Web
+Audio and those that deny access: gameplay remains fully functional and
+silent. The HUD has a focusable **♪ ON / ♪ OFF** control with explicit
+accessible labels and pressed states. Its preference is saved in a separate
+localStorage key; existing score data is untouched. Ambient surf fades out
+when the game pauses or ends and the AudioContext is suspended on pause;
+audio can resume through another player gesture.
+
+Visual performance refinements in
+`coast/environment/render-budget.js` keep particle bursts capped at 96
+instances, update them in-place without a per-frame array filter, and cull
+off-screen collectible, enemy and particle artwork. Gameplay state and
+enemy movement continue to update even when a sprite is not visible.
+Canvas remains at its existing resolution; screen-reader and on-screen
+touch controls are preserved. The sound control uses small-screen
+responsive sizing and visible keyboard focus styling.
+
+Unit tests in `tests/audio-performance.test.cjs` validate sound unlock
+gating, missing browser APIs, mute/unmute, ambience pause, valid sound
+definitions, camera visibility checks and in-place bounded particle reuse.
+Manual audio and FPS measurements on Android/desktop remain required before
+considering Phase 2.5 production-ready.
