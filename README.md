@@ -210,3 +210,27 @@ The module `coast/world/nets.js` registers decks and exposes climbing regions;
 `coast/sprites.js` draws woven platforms and net ladders. Tests in
 `tests/nets.test.cjs` cover landings, jump-off, climbing both directions,
 the original ladders, resets, and equivalent physics at 30/60/120 FPS.
+
+
+## Phase 2.5.1 — Parallax backgrounds and atmospheric depth
+
+Stilt Village now renders the background through `coast/environment/parallax.js`,
+a dedicated deterministic Canvas renderer. Four independent camera-scaled
+layers create a visual sense of distance: slow-moving clouds (0.035×),
+distant islands (0.10×), nearer ridgelines (0.22×), and background coastal
+village silhouettes and palm trees (0.40×). Pixelated hill profiles, coastal
+haze, an ocean horizon and subtle cloud drift provide atmosphere without
+replacing the game's existing original art style.
+
+Background repetition is capped to the visible 960px canvas width instead of
+drawing the entire world. The renderer reuses the existing house, palm and
+boat sprite functions rather than loading new external images. When the
+device requests reduced motion, time-driven cloud drift and background boat
+bobbing are disabled. The game still uses its original world-space collision
+geometry, camera rules, physics, enemies, saves, hazards and interactive
+platforms.
+
+Tests in `tests/parallax.test.cjs` validate depth ratios, scroll wrapping,
+view-bounded work, static ocean coverage, reduced motion and gameplay geometry
+isolation. The original `CoastSprites.background` remains available for
+compatibility; only Stage 1's background draw call is switched.
