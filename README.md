@@ -257,3 +257,27 @@ background but before all foreground objects.
 `tests/water.test.cjs` covers the visible water band, camera culling,
 wake direction, bounded splash lifetimes, reduced-motion mode, and render
 validation. No additional artwork downloads or save migrations are needed.
+
+
+## Phase 2.5.3 — Village architecture and tropical vegetation
+
+Stilt Village's existing wooden houses now receive additional decorative
+detailing: stepped roof-thatch fibres, wall weave patterns, carved veranda
+rails and woven baskets. Nearby cosmetic fishing racks, drying fish and
+small wooden crates suggest an inhabited coastal settlement. Architectural
+detailing uses the exact house positions and scaled coordinate system from
+`CoastLevel.houses`, retaining the original playable roof and floor shapes.
+
+Tropical foliage features handcrafted pixel-art palms, low coastal shrubs
+and flowers positioned along the established route. Decorative fronds sway
+subtly when allowed; `prefers-reduced-motion` freezes this movement.
+All decoration is painted *behind* the original walkable platforms, ropes,
+interactive obstacles, hazards and player. Rendering work is culled to the
+visible world-camera window and never registers a collision surface.
+
+New modules: `coast/environment/village.js` and
+`coast/environment/vegetation.js`. The Stage 1 rendering integration,
+script ordering, offline cache v0.16 and GitHub JavaScript syntax checks
+are updated. `tests/environment.test.cjs` checks architectural placement,
+fishing props, foliage variety, camera culling, reduced motion and
+unchanged collision/enemy geometry.
