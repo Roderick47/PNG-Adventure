@@ -234,3 +234,26 @@ Tests in `tests/parallax.test.cjs` validate depth ratios, scroll wrapping,
 view-bounded work, static ocean coverage, reduced motion and gameplay geometry
 isolation. The original `CoastSprites.background` remains available for
 compatibility; only Stage 1's background draw call is switched.
+
+## Phase 2.5.2 — Animated lagoon and water feedback
+
+Stilt Village now uses `coast/environment/water.js` to render decorative water
+bands, reflected light, stilt-post foam and wakes that follow the actual
+moving-canoe positions. These effects are rendered in **world coordinates**
+below the gameplay layer; the existing water hazard at `CoastLevel.WATER_Y`
+and all collision/physics rules are unchanged.
+
+A bounded pool of up to 24 lightweight splash particles responds to
+canoe landings, jumping off canoes, and water falls. Particle lifetimes
+are short and the pool clears when the game restarts. Drawing loops are
+bounded to the visible 960-pixel canvas rather than the full level.
+
+The user's `prefers-reduced-motion` setting freezes decorative ambient waves
+and reflection drift while preserving gameplay feedback. This feature is
+independent from Phase 2.5.1 parallax backgrounds and can be reviewed
+separately; after both are merged, the water layer is painted after the
+background but before all foreground objects.
+
+`tests/water.test.cjs` covers the visible water band, camera culling,
+wake direction, bounded splash lifetimes, reduced-motion mode, and render
+validation. No additional artwork downloads or save migrations are needed.
