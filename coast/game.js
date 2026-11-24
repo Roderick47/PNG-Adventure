@@ -17,7 +17,9 @@
   const platforms=window.CoastPlatforms.create();
   const canoes=window.CoastCanoes.install(platforms);
   const breakaways=window.CoastBreakaways.install(platforms,p);
-  const controller=window.CoastController.create(L,p,undefined,platforms);
+  const nets=window.CoastNets.install(platforms);
+  const climbLevel=window.CoastNets.withClimbs(L);
+  const controller=window.CoastController.create(climbLevel,p,undefined,platforms);
   try{best=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");}catch(_){}
   function saveBest(){
     if(!best||runTime<best.time||runTime===best.time&&collected>best.coins){
@@ -164,6 +166,16 @@
     for(const pform of L.surfaces){
       if(pform.x+pform.w<camera-80||pform.x>camera+1040)continue;
       S.plank(g,pform.x,pform.y,pform.w,pform.kind);
+    }
+    for(const net of nets){
+      if(net.x+net.w>=camera-60&&net.x<=camera+1020){
+        S.netDeck(g,net,clock);
+      }
+    }
+    for(const net of window.CoastNets.CLIMBS){
+      if(net.x+net.w>=camera-60&&net.x<=camera+1020){
+        S.climbNet(g,net,clock);
+      }
     }
     for(const board of breakaways){
       if(board.x+board.w>=camera-60&&board.x<=camera+1020){
