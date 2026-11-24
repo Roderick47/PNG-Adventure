@@ -9,6 +9,8 @@
 })(typeof window!=="undefined"?window:(typeof globalThis!=="undefined"?globalThis:this),function(){
  "use strict";
  const SOUNDS=Object.freeze({
+  step:Object.freeze({frequency:130,end:95,duration:.07,type:"triangle",volume:.065}),
+  bird:Object.freeze({frequency:900,end:1220,duration:.12,type:"sine",volume:.055}),
   jump:Object.freeze({frequency:370,end:620,duration:.12,type:"sine",volume:.12}),
   land:Object.freeze({frequency:150,end:90,duration:.11,type:"triangle",volume:.11}),
   wood:Object.freeze({frequency:190,end:65,duration:.15,type:"triangle",volume:.15}),
