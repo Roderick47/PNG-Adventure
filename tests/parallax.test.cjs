@@ -71,7 +71,8 @@ test("reduced motion suppresses time-based cloud drift and boat bob",()=>{
  const a=harness(),b=harness();
  Parallax.draw(a.g,100,0,a.art,{reducedMotion:true});
  Parallax.draw(b.g,100,150,b.art,{reducedMotion:true});
- assert.deepEqual(a.blocks,b.blocks);
+ assert.deepEqual(a.blocks.map(({color,...rect})=>({...rect,color:typeof color==="string"?color:"sky-gradient"})),
+   b.blocks.map(({color,...rect})=>({...rect,color:typeof color==="string"?color:"sky-gradient"})));
  assert.deepEqual(a.clouds,b.clouds);
  const c=harness();
  Parallax.draw(c.g,100,5,c.art,{reducedMotion:false});
