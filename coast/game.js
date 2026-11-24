@@ -2,6 +2,7 @@
 (function () {
   "use strict";
   const L=window.CoastLevel,S=window.CoastSprites;
+  const water=window.CoastWater.create();
   const parallax=window.CoastParallax;
   const reduceMotion=typeof window.matchMedia==="function"&&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -31,6 +32,7 @@
     }
   }
   function reset(){
+    water.reset();
     platforms.reset();
     controller.reset();p.anim=0;
     animator.reset();
@@ -111,21 +113,25 @@
   function update(dt){
     clock+=dt;
     if(mode!=="playing")return;
+    water.advance(dt);
     runTime+=dt;
     invulnerable=Math.max(0,invulnerable-dt);
+    const wasOnCanoe=typeof p.supportId==="string"&&p.supportId.startsWith("canoe-");
     const movement=controller.step(keys,dt);
+    if(movement.jumped&&wasOnCanoe)water.splash(p.x,L.WATER_Y+5,"canoe");
     if(movement.jumped){
       animator.trigger("takeoff");
       burst(p.x,p.feet-3,"#f2dbaa",7);
     }
     if(movement.landed){
+      if(typeof p.supportId==="string"&&p.supportId.startsWith("canoe-"))water.splash(p.x,L.WATER_Y+5,"canoe");
       burst(p.x,p.feet,"#e4c591",5);
       animator.trigger("land");
     }
     if(p.grounded && p.feet===L.FLOOR && p.x<475){
       lastSafe={x:p.x,feet:p.feet};
     }
-    if(p.feet>L.WATER_Y+80){hurt(true);return;}
+    if(p.feet>L.WATER_Y+80){water.splash(p.x,L.WATER_Y+7,"fall");hurt(true);return;}
     if(!checkpoint&&p.x>=L.checkpoint.x){checkpoint=true;flash("CHECKPOINT REACHED!");}
     const body={x:p.x-14,y:p.feet-(p.crouch?27:58),w:28,h:p.crouch?27:58};
     for(const coin of coins){
@@ -159,9 +165,15 @@
     updateHud();
   }
   function rect(x,y,w,h,color){g.fillStyle=color;g.fillRect(Math.floor(x),Math.floor(y),Math.ceil(w),Math.ceil(h));}
+  function waterRenderer(ctx,cameraPos,time){
+    window.CoastWater.draw(ctx,cameraPos,time,L.WATER_Y,{
+      surfaces:L.surfaces,canoes,splashes:water.snapshot()
+    },{reducedMotion:reduceMotion});
+  }
   function draw(){
     parallax.draw(g,camera,clock,S,{reducedMotion:reduceMotion});
     g.save();g.translate(-Math.floor(camera),0);g.imageSmoothingEnabled=false;
+    waterRenderer(g,camera,clock);
     for(const h of L.houses){
       // Foreground stilt houses add recognisable village architecture to the platform layer.
       if(h.x>camera-240&&h.x<camera+1150)S.house(g,h.x,h.y,h.scale,h.tint);
@@ -195,11 +207,6 @@
         rect(ladder.x,y,5,18,"#76503e");rect(ladder.x+22,y,5,18,"#76503e");
         rect(ladder.x,y+8,27,4,"#d1a36f");
       }
-    }
-    // Water is a visible danger under the boardwalks; sea motion is subtle.
-    for(let i=0;i<20;i++){
-      const x=i*174+Math.sin(clock+i)*15;
-      rect(x,L.WATER_Y+8+Math.sin(clock*2+i)*5,68,3,"#7bd1c4");
     }
     for(const f of fish){
       const pose=L.fishPosition(f,clock);
