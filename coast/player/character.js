@@ -135,6 +135,32 @@
     if(win){px(8,faceY-12,7,4,P.skin);px(39,faceY-8,7,4,P.skin);}
   }
   const SIZES=Object.freeze({width:WIDTH,height:HEIGHT,origin:ORIGIN});
+  // External atlas uses 96x112 cells, ten columns, feet at (48,108).
+  // Keep the procedural frames as a fallback until the image loads successfully.
+  const SOURCE_FRAMES=Object.freeze({
+    idle:[0,1,2,3,4,5],run:[19,20,21,22,23,24,25,26],
+    takeoff:[27,28],rise:[28,29],apex:[29],fall:[32,33],
+    land:[36,37,39],crouch:[39,40,41],crouchIdle:[40,41],
+    climb:[63,64,65,64],hurt:[80,81,82],victory:[112,113,114,115,114,113]
+  });
+  const atlasURL=typeof document!=="undefined"&&document.currentScript
+    ? new URL("../../assets/player/atlas.png",document.currentScript.src).href:null;
+  function loadExternalAtlas(atlas){
+    if(!atlasURL||typeof Image==="undefined")return;
+    const image=new Image();
+    image.onload=()=>{
+      if(image.naturalWidth!==960||image.naturalHeight!==1344)return;
+      for(const [action,indices] of Object.entries(SOURCE_FRAMES)){
+        indices.forEach((id,i)=>{
+          const ctx=atlas[action][i].getContext("2d");
+          ctx.clearRect(0,0,WIDTH,HEIGHT);
+          ctx.imageSmoothingEnabled=false;
+          ctx.drawImage(image,(id%10)*96,Math.floor(id/10)*112,96,112,0,8,48,56);
+        });
+      }
+    };
+    image.src=atlasURL;
+  }
   function createAtlas(createCanvas){
     if(typeof createCanvas!=="function")throw new TypeError("createCanvas required");
     const atlas=Object.create(null);
@@ -148,6 +174,7 @@
         return cv;
       });
     }
+    loadExternalAtlas(atlas);
     return atlas;
   }
   function draw(ctx,atlas,action,index,x,feet,scale=1,flip=false){
@@ -161,5 +188,5 @@
     else ctx.drawImage(arr[n],left,top,width,height);
     ctx.restore();
   }
-  return Object.freeze({WIDTH,HEIGHT,ORIGIN,SIZES,palette,FRAME_COUNTS,FRAME_FPS,drawFrame,createAtlas,draw});
+  return Object.freeze({WIDTH,HEIGHT,ORIGIN,SIZES,palette,FRAME_COUNTS,FRAME_FPS,SOURCE_FRAMES,drawFrame,createAtlas,draw});
 });
