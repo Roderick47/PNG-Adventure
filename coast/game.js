@@ -4,6 +4,24 @@
   const L=window.CoastLevel,S=window.CoastSprites;
   const water=window.CoastWater.create();
   const feedback=window.CoastFeedback.create();
+  const budget=window.CoastRenderBudget;
+  const AUDIO_KEY="png-adventure-coast-muted-v1";
+  let mutedPreference=false;
+  try{mutedPreference=localStorage.getItem(AUDIO_KEY)==="true";}catch(_){}
+  const sound=window.CoastSound.create({muted:mutedPreference});
+  const audioButton=document.getElementById("audio");
+  function updateAudioButton(){
+    const muted=sound.status().muted;
+    audioButton.textContent=muted?"♪ OFF":"♪ ON";
+    audioButton.setAttribute("aria-label",muted?"Unmute game sound":"Mute game sound");
+    audioButton.setAttribute("aria-pressed",String(!muted));
+    audioButton.title=muted?"Enable sound":"Mute sound";
+  }
+  function setMuted(muted){
+    sound.mute(muted);
+    try{localStorage.setItem(AUDIO_KEY,String(muted));}catch(_){}
+    updateAudioButton();
+  }
   const parallax=window.CoastParallax;
   const reduceMotion=typeof window.matchMedia==="function"&&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -33,6 +51,7 @@
     }
   }
   function reset(){
+    sound.update(clock,false);
     feedback.reset();
     water.reset();
     platforms.reset();
@@ -53,6 +72,8 @@
   }
   function display(type){
     mode=type;hud.classList.toggle("hidden",type!=="playing");
+    sound.update(clock,false);
+    if(type==="pause"||type==="help"||type==="menu"||type==="over")sound.suspend();
     playArea.classList.remove("controls-live");
     releaseAll();
     overlay.classList.remove("hidden");
@@ -90,13 +111,14 @@
     setTimeout(()=>{if(statusEl.textContent===text)statusEl.textContent=""},1300);
   }
   function burst(x,y,color,n){
-    for(let i=0;i<n;i++)fx.push({x,y,vx:(Math.random()-.5)*130,vy:-70-Math.random()*100,life:.45+Math.random()*.25,color});
+    for(let i=0;i<n;i++)budget.addParticle(fx,{x,y,vx:(Math.random()-.5)*130,vy:-70-Math.random()*100,life:.45+Math.random()*.25,color});
   }
   function hurt(fall=false){
     if(mode!=="playing"||(!fall&&invulnerable>0))return;
     const damage=invulnerable<=0;
     if(damage){
       hearts--;invulnerable=1.4;
+      sound.cue("hurt");
       feedback.emit("danger",p.x,p.feet-31);
       burst(p.x,p.feet-25,"#ffe0a7",12);
       updateHud();
@@ -124,6 +146,7 @@
     const movement=controller.step(keys,dt);
     if(movement.jumped&&wasOnCanoe)water.splash(p.x,L.WATER_Y+5,"canoe");
     if(movement.jumped){
+      sound.cue("jump");
       feedback.emit(wasOnCanoe?"canoe":"jump",p.x,p.feet);
       animator.trigger("takeoff");
       burst(p.x,p.feet-3,"#f2dbaa",7);
@@ -133,6 +156,7 @@
         typeof p.supportId==="string"&&p.supportId.startsWith("net-")?"net":
         typeof p.supportId==="string"&&p.supportId.startsWith("plank-")?"wood":"land";
       feedback.emit(landType,p.x,p.feet);
+      sound.cue(landType);
       if(typeof p.supportId==="string"&&p.supportId.startsWith("canoe-"))water.splash(p.x,L.WATER_Y+5,"canoe");
       burst(p.x,p.feet,"#e4c591",5);
       animator.trigger("land");
@@ -140,13 +164,13 @@
     if(p.grounded && p.feet===L.FLOOR && p.x<475){
       lastSafe={x:p.x,feet:p.feet};
     }
-    if(p.feet>L.WATER_Y+80){water.splash(p.x,L.WATER_Y+7,"fall");hurt(true);return;}
-    if(!checkpoint&&p.x>=L.checkpoint.x){checkpoint=true;feedback.emit("checkpoint",L.checkpoint.x,L.checkpoint.y-26);flash("CHECKPOINT REACHED!");}
+    if(p.feet>L.WATER_Y+80){water.splash(p.x,L.WATER_Y+7,"fall");sound.cue("splash");hurt(true);return;}
+    if(!checkpoint&&p.x>=L.checkpoint.x){checkpoint=true;feedback.emit("checkpoint",L.checkpoint.x,L.checkpoint.y-26);sound.cue("checkpoint");flash("CHECKPOINT REACHED!");}
     const body={x:p.x-14,y:p.feet-(p.crouch?27:58),w:28,h:p.crouch?27:58};
     for(const coin of coins){
       if(coin.taken)continue;
       if(L.overlap(body,{x:coin.x-9,y:coin.y-10,w:18,h:20})){
-        coin.taken=true;collected++;feedback.emit("collect",coin.x,coin.y);burst(coin.x,coin.y,"#ffe291",6);updateHud();
+        coin.taken=true;collected++;sound.cue("collect");feedback.emit("collect",coin.x,coin.y);burst(coin.x,coin.y,"#ffe291",6);updateHud();
       }
     }
     for(const crab of crabs){
@@ -164,14 +188,14 @@
       if(pose.active&&L.overlap(body,{x:pose.x-13,y:pose.y-10,w:26,h:20})){hurt();return;}
     }
     if(p.x>=L.finish.x&&p.feet<=L.finish.y+10){
-      animator.trigger("victory");
+      animator.trigger("victory");sound.cue("victory");
       saveBest();display("win");return;
     }
-    for(const v of fx){v.x+=v.vx*dt;v.y+=v.vy*dt;v.vy+=260*dt;v.life-=dt;}
-    fx=fx.filter(v=>v.life>0);
+    budget.advanceParticles(fx,dt);
     const goal=L.clamp(p.x-320,0,L.WORLD_WIDTH-960);
     camera+= (goal-camera)*Math.min(1,dt*7);
     updateHud();
+    sound.update(clock,true);
   }
   function rect(x,y,w,h,color){g.fillStyle=color;g.fillRect(Math.floor(x),Math.floor(y),Math.ceil(w),Math.ceil(h));}
   function waterRenderer(ctx,cameraPos,time){
@@ -191,7 +215,7 @@
     window.CoastWildlife.draw(g,camera,clock,L,{reducedMotion:reduceMotion});
     window.CoastVegetation.draw(g,camera,clock,{reducedMotion:reduceMotion});
     for(const pform of L.surfaces){
-      if(pform.x+pform.w<camera-80||pform.x>camera+1040)continue;
+      if(!budget.visible(pform.x,pform.w,camera,80))continue;
       S.plank(g,pform.x,pform.y,pform.w,pform.kind);
     }
     for(const net of nets){
@@ -222,6 +246,7 @@
     }
     for(const f of fish){
       const pose=L.fishPosition(f,clock);
+      if(!budget.visible(f.x,50,camera,50))continue;
       if(pose.warning){
         rect(f.x-21,L.WATER_Y-3,43,3,"#f6e5b0");
         rect(f.x-10,L.WATER_Y-10,20,3,"#f6e5b0");
@@ -229,10 +254,10 @@
       if(pose.active)S.sprite(g,"fish",clock*6,pose.x-16,pose.y-11,32,23,false);
     }
     for(const crab of crabs){
-      if(crab.alive)S.sprite(g,"crab",clock*7,crab.x-16,crab.y-17,32,24,crab.dir<0);
+      if(crab.alive&&budget.visible(crab.x,34,camera))S.sprite(g,"crab",clock*7,crab.x-16,crab.y-17,32,24,crab.dir<0);
     }
     for(const coin of coins){
-      if(!coin.taken)S.sprite(g,"coin",clock*8,coin.x-10,coin.y-12,20,23);
+      if(!coin.taken&&budget.visible(coin.x,20,camera))S.sprite(g,"coin",clock*8,coin.x-10,coin.y-12,20,23);
     }
     const cp=L.checkpoint;
     rect(cp.x-3,cp.y-70,6,70,"#80593e");
@@ -247,7 +272,7 @@
       player:p,surfaces:L.surfaces,breakaways,netClimbs:window.CoastNets.CLIMBS,
       ladders:L.ladders,coins,checkpoint:L.checkpoint,activated:checkpoint,crabs
     },feedback.snapshot(),{reducedMotion:reduceMotion});
-    for(const v of fx)rect(v.x,v.y,5,5,v.color);
+    for(const v of fx)if(budget.visible(v.x,5,camera))rect(v.x,v.y,5,5,v.color);
     const pose=animator.current();
     const flashInv=invulnerable>0&&Math.floor(invulnerable*10)%2===0;
     if(!flashInv || pose.action==="victory"){
@@ -328,14 +353,20 @@
   });
   overlay.addEventListener("click",e=>{
     const action=e.target.closest("[data-action]")?.dataset.action;
-    if(action==="play")reset();
+    if(action==="play"){sound.unlock();reset();}
     if(action==="help")display("help");
     if(action==="menu")display("menu");
-    if(action==="resume")resume();
+    if(action==="resume"){sound.unlock();resume();}
   });
-  function resume(){releaseAll();mode="playing";playArea.classList.add("controls-live");overlay.classList.add("hidden");hud.classList.remove("hidden");last=performance.now();}
+  function resume(){releaseAll();sound.unlock();mode="playing";playArea.classList.add("controls-live");overlay.classList.add("hidden");hud.classList.remove("hidden");last=performance.now();}
   document.getElementById("pause").addEventListener("click",()=>{if(mode==="playing")display("pause");});
-  document.getElementById("reset").addEventListener("click",()=>reset());
+  document.getElementById("reset").addEventListener("click",()=>{sound.unlock();reset();});
+  audioButton.addEventListener("click",()=>{
+    const next=!sound.status().muted;
+    setMuted(next);
+    if(!next)sound.unlock();
+  });
+  updateAudioButton();
   canvas.setAttribute("tabindex","0");
   display("menu");requestAnimationFrame(loop);
 })();
