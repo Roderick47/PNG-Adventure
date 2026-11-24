@@ -29,6 +29,7 @@ jobs:
           node --check coast/player/workshop.js
           node --check coast/sprites.js
           node --check coast/environment/parallax.js
+          node --check coast/environment/water.js
           node --check coast/game.js
       - name: Run game rules tests
         run: npm test
