@@ -1,6 +1,6 @@
 (function(){
 "use strict";
-const boy=window.CoastBoy,atlas=boy.createAtlas((w,h)=>{const c=document.createElement("canvas");c.width=w;c.height=h;return c});
+const boy=window.CoastBoy,atlas=boy.createAtlas((w,h)=>{const c=document.createElement("canvas");c.width=w;c.height=h;return c},()=>refreshThumbnails());
 const select=document.getElementById("pose"),slider=document.getElementById("frame"),label=document.getElementById("frame-label");
 const info=document.getElementById("info"),grid=document.getElementById("frames");
 const canvas=document.getElementById("preview"),ctx=canvas.getContext("2d");
@@ -18,6 +18,9 @@ function selectPose(name){
   grid.append(btn);
  });
  draw(0);
+}
+function refreshThumbnails(){
+ [...grid.children].forEach((btn,i)=>{const c=btn.querySelector("canvas"),g=c.getContext("2d");g.clearRect(0,0,c.width,c.height);g.imageSmoothingEnabled=false;g.drawImage(atlas[action][i],0,0);});
 }
 function draw(t){
  ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,512,512);

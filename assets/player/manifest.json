@@ -1,0 +1,527 @@
+{
+  "frameWidth": 96,
+  "frameHeight": 112,
+  "columns": 10,
+  "anchor": [
+    48,
+    108
+  ],
+  "animations": {
+    "idle": [
+      {
+        "file": "idle_00.png",
+        "index": 0
+      },
+      {
+        "file": "idle_01.png",
+        "index": 1
+      },
+      {
+        "file": "idle_02.png",
+        "index": 2
+      },
+      {
+        "file": "idle_03.png",
+        "index": 3
+      },
+      {
+        "file": "idle_04.png",
+        "index": 4
+      },
+      {
+        "file": "idle_05.png",
+        "index": 5
+      }
+    ],
+    "blink": [
+      {
+        "file": "blink_00.png",
+        "index": 6
+      },
+      {
+        "file": "blink_01.png",
+        "index": 7
+      }
+    ],
+    "emote": [
+      {
+        "file": "emote_00.png",
+        "index": 8
+      },
+      {
+        "file": "emote_01.png",
+        "index": 9
+      },
+      {
+        "file": "emote_02.png",
+        "index": 10
+      },
+      {
+        "file": "emote_03.png",
+        "index": 11
+      }
+    ],
+    "walk": [
+      {
+        "file": "walk_00.png",
+        "index": 12
+      },
+      {
+        "file": "walk_01.png",
+        "index": 13
+      },
+      {
+        "file": "walk_02.png",
+        "index": 14
+      },
+      {
+        "file": "walk_03.png",
+        "index": 15
+      },
+      {
+        "file": "walk_04.png",
+        "index": 16
+      },
+      {
+        "file": "walk_05.png",
+        "index": 17
+      },
+      {
+        "file": "walk_06.png",
+        "index": 18
+      }
+    ],
+    "run": [
+      {
+        "file": "run_00.png",
+        "index": 19
+      },
+      {
+        "file": "run_01.png",
+        "index": 20
+      },
+      {
+        "file": "run_02.png",
+        "index": 21
+      },
+      {
+        "file": "run_03.png",
+        "index": 22
+      },
+      {
+        "file": "run_04.png",
+        "index": 23
+      },
+      {
+        "file": "run_05.png",
+        "index": 24
+      },
+      {
+        "file": "run_06.png",
+        "index": 25
+      },
+      {
+        "file": "run_07.png",
+        "index": 26
+      }
+    ],
+    "jump": [
+      {
+        "file": "jump_00.png",
+        "index": 27
+      },
+      {
+        "file": "jump_01.png",
+        "index": 28
+      },
+      {
+        "file": "jump_02.png",
+        "index": 29
+      },
+      {
+        "file": "jump_03.png",
+        "index": 30
+      },
+      {
+        "file": "jump_04.png",
+        "index": 31
+      }
+    ],
+    "fall": [
+      {
+        "file": "fall_00.png",
+        "index": 32
+      },
+      {
+        "file": "fall_01.png",
+        "index": 33
+      },
+      {
+        "file": "fall_02.png",
+        "index": 34
+      },
+      {
+        "file": "fall_03.png",
+        "index": 35
+      }
+    ],
+    "land": [
+      {
+        "file": "land_00.png",
+        "index": 36
+      },
+      {
+        "file": "land_01.png",
+        "index": 37
+      },
+      {
+        "file": "land_02.png",
+        "index": 38
+      },
+      {
+        "file": "land_03.png",
+        "index": 39
+      }
+    ],
+    "crouch": [
+      {
+        "file": "crouch_00.png",
+        "index": 40
+      },
+      {
+        "file": "crouch_01.png",
+        "index": 41
+      }
+    ],
+    "push": [
+      {
+        "file": "push_00.png",
+        "index": 42
+      },
+      {
+        "file": "push_01.png",
+        "index": 43
+      },
+      {
+        "file": "push_02.png",
+        "index": 44
+      },
+      {
+        "file": "push_03.png",
+        "index": 45
+      }
+    ],
+    "pull": [
+      {
+        "file": "pull_00.png",
+        "index": 46
+      },
+      {
+        "file": "pull_01.png",
+        "index": 47
+      },
+      {
+        "file": "pull_02.png",
+        "index": 48
+      },
+      {
+        "file": "pull_03.png",
+        "index": 49
+      }
+    ],
+    "interact": [
+      {
+        "file": "interact_00.png",
+        "index": 50
+      },
+      {
+        "file": "interact_01.png",
+        "index": 51
+      },
+      {
+        "file": "interact_02.png",
+        "index": 52
+      },
+      {
+        "file": "interact_03.png",
+        "index": 53
+      }
+    ],
+    "pickup": [
+      {
+        "file": "pickup_00.png",
+        "index": 54
+      },
+      {
+        "file": "pickup_01.png",
+        "index": 55
+      },
+      {
+        "file": "pickup_02.png",
+        "index": 56
+      },
+      {
+        "file": "pickup_03.png",
+        "index": 57
+      }
+    ],
+    "carry": [
+      {
+        "file": "carry_00.png",
+        "index": 58
+      },
+      {
+        "file": "carry_01.png",
+        "index": 59
+      },
+      {
+        "file": "carry_02.png",
+        "index": 60
+      },
+      {
+        "file": "carry_03.png",
+        "index": 61
+      },
+      {
+        "file": "carry_04.png",
+        "index": 62
+      }
+    ],
+    "climb": [
+      {
+        "file": "climb_00.png",
+        "index": 63
+      },
+      {
+        "file": "climb_01.png",
+        "index": 64
+      },
+      {
+        "file": "climb_02.png",
+        "index": 65
+      }
+    ],
+    "hang": [
+      {
+        "file": "hang_00.png",
+        "index": 66
+      },
+      {
+        "file": "hang_01.png",
+        "index": 67
+      },
+      {
+        "file": "hang_02.png",
+        "index": 68
+      },
+      {
+        "file": "hang_03.png",
+        "index": 69
+      }
+    ],
+    "swing": [
+      {
+        "file": "swing_00.png",
+        "index": 70
+      },
+      {
+        "file": "swing_01.png",
+        "index": 71
+      },
+      {
+        "file": "swing_02.png",
+        "index": 72
+      },
+      {
+        "file": "swing_03.png",
+        "index": 73
+      },
+      {
+        "file": "swing_04.png",
+        "index": 74
+      },
+      {
+        "file": "swing_05.png",
+        "index": 75
+      }
+    ],
+    "getup": [
+      {
+        "file": "getup_00.png",
+        "index": 76
+      },
+      {
+        "file": "getup_01.png",
+        "index": 77
+      },
+      {
+        "file": "getup_02.png",
+        "index": 78
+      },
+      {
+        "file": "getup_03.png",
+        "index": 79
+      }
+    ],
+    "hurt": [
+      {
+        "file": "hurt_00.png",
+        "index": 80
+      },
+      {
+        "file": "hurt_01.png",
+        "index": 81
+      },
+      {
+        "file": "hurt_02.png",
+        "index": 82
+      },
+      {
+        "file": "hurt_03.png",
+        "index": 83
+      }
+    ],
+    "knockout": [
+      {
+        "file": "knockout_00.png",
+        "index": 84
+      },
+      {
+        "file": "knockout_01.png",
+        "index": 85
+      },
+      {
+        "file": "knockout_02.png",
+        "index": 86
+      },
+      {
+        "file": "knockout_03.png",
+        "index": 87
+      },
+      {
+        "file": "knockout_04.png",
+        "index": 88
+      },
+      {
+        "file": "knockout_05.png",
+        "index": 89
+      }
+    ],
+    "swim": [
+      {
+        "file": "swim_00.png",
+        "index": 90
+      },
+      {
+        "file": "swim_01.png",
+        "index": 91
+      },
+      {
+        "file": "swim_02.png",
+        "index": 92
+      },
+      {
+        "file": "swim_03.png",
+        "index": 93
+      },
+      {
+        "file": "swim_04.png",
+        "index": 94
+      },
+      {
+        "file": "swim_05.png",
+        "index": 95
+      }
+    ],
+    "attack": [
+      {
+        "file": "attack_00.png",
+        "index": 96
+      },
+      {
+        "file": "attack_01.png",
+        "index": 97
+      },
+      {
+        "file": "attack_02.png",
+        "index": 98
+      },
+      {
+        "file": "attack_03.png",
+        "index": 99
+      }
+    ],
+    "throw": [
+      {
+        "file": "throw_00.png",
+        "index": 100
+      },
+      {
+        "file": "throw_01.png",
+        "index": 101
+      },
+      {
+        "file": "throw_02.png",
+        "index": 102
+      },
+      {
+        "file": "throw_03.png",
+        "index": 103
+      }
+    ],
+    "tool": [
+      {
+        "file": "tool_00.png",
+        "index": 104
+      },
+      {
+        "file": "tool_01.png",
+        "index": 105
+      },
+      {
+        "file": "tool_02.png",
+        "index": 106
+      },
+      {
+        "file": "tool_03.png",
+        "index": 107
+      }
+    ],
+    "wave": [
+      {
+        "file": "wave_00.png",
+        "index": 108
+      },
+      {
+        "file": "wave_01.png",
+        "index": 109
+      },
+      {
+        "file": "wave_02.png",
+        "index": 110
+      },
+      {
+        "file": "wave_03.png",
+        "index": 111
+      }
+    ],
+    "celebrate": [
+      {
+        "file": "celebrate_00.png",
+        "index": 112
+      },
+      {
+        "file": "celebrate_01.png",
+        "index": 113
+      },
+      {
+        "file": "celebrate_02.png",
+        "index": 114
+      },
+      {
+        "file": "celebrate_03.png",
+        "index": 115
+      }
+    ]
+  }
+}

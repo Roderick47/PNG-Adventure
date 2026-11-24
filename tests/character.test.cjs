@@ -69,3 +69,43 @@ test("invalid poses and frame indices fail explicitly",()=>{
  assert.throws(()=>boy.drawFrame(c,"unknown",0),/Unknown/);
  assert.throws(()=>boy.drawFrame(c,"idle",6),RangeError);
 });
+
+
+test("external atlas matches committed PNG and animation manifest",()=>{
+ const fs=require("node:fs"),path=require("node:path");
+ const dir=path.join(__dirname,"../assets/player");
+ const png=fs.readFileSync(path.join(dir,"atlas.png"));
+ const manifest=JSON.parse(fs.readFileSync(path.join(dir,"manifest.json"),"utf8"));
+ assert.equal(png.subarray(0,8).toString("hex"),"89504e470d0a1a0a");
+ assert.equal(png.readUInt32BE(16),960);
+ assert.equal(png.readUInt32BE(20),1344);
+ assert.equal(png[25],6);
+ assert.deepEqual(manifest.anchor,[48,108]);
+ const ids=Object.values(manifest.animations).flat().map(f=>f.index);
+ assert.equal(new Set(ids).size,116);
+ for(const [action,count] of Object.entries(boy.FRAME_COUNTS)){
+  assert.equal(boy.SOURCE_FRAMES[action].length,count);
+  for(const id of boy.SOURCE_FRAMES[action])assert.ok(ids.includes(id));
+ }
+ assert.ok(!boy.SOURCE_FRAMES.rise.includes(29));
+ assert.notEqual(boy.SOURCE_FRAMES.apex[0],29);
+});
+
+test("browser atlas loader preserves fallback and replaces frames in place",()=>{
+ const fs=require("node:fs"),vm=require("node:vm");
+ const code=fs.readFileSync(require.resolve("../coast/player/character.js"),"utf8");
+ let image,ready=0,draws=0,clears=0;
+ const sandbox={URL,document:{currentScript:{src:"https://example.test/coast/player/character.js"}},Image:class{constructor(){image=this;}}};
+ vm.runInNewContext(code,sandbox);
+ const atlas=sandbox.CoastBoy.createAtlas((w,h)=>({width:w,height:h,getContext:()=>({
+  fillRect(){},clearRect(){clears++},drawImage(){draws++}
+ })}),()=>ready++);
+ const idle=atlas.idle[0];
+ assert.equal(image.src,"https://example.test/assets/player/atlas.png");
+ image.naturalWidth=1;image.naturalHeight=1;image.onload();
+ assert.equal(clears,0);assert.equal(ready,0);
+ image.naturalWidth=960;image.naturalHeight=1344;image.onload();
+ assert.equal(atlas.idle[0],idle);
+ assert.equal(draws,Object.values(boy.FRAME_COUNTS).reduce((a,b)=>a+b,0));
+ assert.equal(clears,draws);assert.equal(ready,1);
+});
