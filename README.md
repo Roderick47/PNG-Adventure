@@ -307,3 +307,30 @@ player movement.
 `tests/wildlife.test.cjs` checks distinct visual zones, predictable motion,
 camera-culling limits, reduced-motion determinism, house anchoring and
 unchanged gameplay geometry.
+
+
+## Phase 2.5.5 — Gameplay feedback and visual clarity
+
+Stilt Village now includes `coast/environment/feedback.js`, a purely
+visual, frame-driven system for readable platform interactions. Landing and
+jumping dispatch short-lived pixel contacts whose hues distinguish wood,
+canoes and nets; token collection and checkpoint activation gain distinct
+four-point confirmation effects; enemy damage receives a brief danger flash.
+Effects are bounded to 40 instances, expire after 0.6 seconds and clear
+when the stage restarts. The existing character animator and older particle
+bursts continue working without any changes to movement.
+
+Render-only, world-space markings distinguish stable boardwalk ends,
+fragile wooden planks (with a caution glyph whether or not activated),
+climbable ladders and nets (a contextual upward indicator appears only near
+the player), and hostile crabs (a contrasting underline). Uncollected tokens
+have a faint pixel sparkle and the checkpoint flag gets a separate visual
+status mark. These markers use shape and position in addition to color;
+they never create collision geometry or alter existing warning timers.
+
+The module runs with deterministic elapsed-time updates, respects
+`prefers-reduced-motion` for decorative movement, and culls off-screen
+effects. It is placed in the existing Stage 1 render sequence above game
+props and below the character. `tests/feedback.test.cjs` covers particle
+lifetimes and caps, interactive object cue states, viewport culling,
+reduced-motion behavior, and isolation from collision/enemy geometry.
