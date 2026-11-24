@@ -36,6 +36,7 @@
   const SAVE_KEY="png-adventure-coast-v1";
   let mode="menu",camera=0,clock=0,runTime=0,last=0,coins=[],crabs=[],fish=[],collected=0,hearts=3;
   let checkpoint=false,invulnerable=0,waterSplash=0,fx=[],best=null,lastSafe={x:83,feet:L.FLOOR};
+  let lastFootstep=-Infinity,nextBird=12;
   const p={x:83,feet:L.FLOOR,vx:0,vy:0,grounded:true,climbing:false,face:1,crouch:false,anim:0,coyote:0,buffer:0};
   const platforms=window.CoastPlatforms.create();
   const canoes=window.CoastCanoes.install(platforms);
@@ -58,6 +59,7 @@
     controller.reset();p.anim=0;
     animator.reset();
     camera=0;clock=0;runTime=0;hearts=3;checkpoint=false;invulnerable=0;collected=0;fx=[];
+    lastFootstep=-Infinity;nextBird=12;
     lastSafe={x:83,feet:L.FLOOR};
     coins=L.coinGroups.map(([x,y])=>({x,y,taken:false}));
     crabs=L.crabs.map(c=>({...c,dir:1,alive:true}));
@@ -144,6 +146,8 @@
     invulnerable=Math.max(0,invulnerable-dt);
     const wasOnCanoe=typeof p.supportId==="string"&&p.supportId.startsWith("canoe-");
     const movement=controller.step(keys,dt);
+    if(p.grounded&&!p.climbing&&Math.abs(p.vx)>42&&clock-lastFootstep>=.32){sound.cue("step");lastFootstep=clock;}
+    if(clock>=nextBird){sound.cue("bird");nextBird=clock+17;}
     if(movement.jumped&&wasOnCanoe)water.splash(p.x,L.WATER_Y+5,"canoe");
     if(movement.jumped){
       sound.cue("jump");
