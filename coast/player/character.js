@@ -138,15 +138,16 @@
   // External atlas uses 96x112 cells, ten columns, feet at (48,108).
   // Keep the procedural frames as a fallback until the image loads successfully.
   const SOURCE_FRAMES=Object.freeze({
-    idle:[0,1,2,3,4,5],run:[19,20,21,22,23,24,25,26],
-    takeoff:[27,28],rise:[28,29],apex:[29],fall:[32,33],
-    land:[36,37,39],crouch:[39,40,41],crouchIdle:[40,41],
+    idle:[0,1,2,3,4,5],run:[19,20,21,22,19,20,21,26],
+    takeoff:[27,28],rise:[28,30],apex:[30],fall:[32,33],
+    land:[36,38,39],crouch:[39,40,41],crouchIdle:[40,41],
     climb:[63,64,65,64],hurt:[80,81,82],victory:[112,113,114,115,114,113]
   });
   const atlasURL=typeof document!=="undefined"&&document.currentScript
     ? new URL("../../assets/player/atlas.png",document.currentScript.src).href:null;
   function loadExternalAtlas(atlas){
     if(!atlasURL||typeof Image==="undefined")return;
+    // A valid image replaces the existing canvases in place; consumers can retain references.
     const image=new Image();
     image.onload=()=>{
       if(image.naturalWidth!==960||image.naturalHeight!==1344)return;
@@ -155,7 +156,14 @@
           const ctx=atlas[action][i].getContext("2d");
           ctx.clearRect(0,0,WIDTH,HEIGHT);
           ctx.imageSmoothingEnabled=false;
-          ctx.drawImage(image,(id%10)*96,Math.floor(id/10)*112,96,112,0,8,48,56);
+          const sx=(id%10)*96,sy=Math.floor(id/10)*112;
+          // Normalize scale across artwork rows, preserving the foot anchor at y=62.
+          const scale=action==="hurt"||action==="victory"?0.82:0.64;
+          // The climbing reference includes ladder rails; crop them out to avoid
+          // rendering a second ladder on top of the world geometry.
+          const crop=action==="climb"?{x:35,y:43,w:26,h:61}:{x:0,y:0,w:96,h:112};
+          ctx.drawImage(image,sx+crop.x,sy+crop.y,crop.w,crop.h,
+            24+(crop.x-48)*scale,62+(crop.y-108)*scale,crop.w*scale,crop.h*scale);
         });
       }
     };
