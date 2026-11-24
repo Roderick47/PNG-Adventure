@@ -164,3 +164,27 @@ substeps. Reset restores original phase, position and travel direction.
 carry, jumping, resets, input rate consistency and invalid configuration.
 
 This milestone doesn't introduce collapsing planks or nets (Phases 2.4.4–2.4.5).
+
+
+## Phase 2.4.4 — Collapsing wooden planks
+
+Three optional elevated wooden planks appear in Stilt Village: above the first
+boardwalk, the middle village crossing, and the late jetty. The permanent
+boardwalk beneath each one remains intact, so collapse does not make the
+normal stage route unplayable.
+
+A player's first landing starts a **0.65-second** crack-and-shake warning.
+The plank then loses collision for **2.5 seconds**, displays falling wooden
+fragments, and regenerates once its timer expires **only if the character
+is clear of the respawn area**. The warning is visual: shaking never moves
+the collision surface. The existing jump buffer and coyote-time behavior
+remain in force, allowing a player to escape on time.
+
+The finite-state machine is implemented in `coast/world/breakaways.js`,
+registered through the existing dynamic-platform manager, and advanced in
+the same bounded physics substeps as the player. Canvas artwork lives in
+`coast/sprites.js`. Restart resets all plank timers and collision states.
+`tests/breakaways.test.cjs` covers warning, collapse, rescue, respawn
+safety, restart, canoe compatibility, and 30/60/120-FPS determinism.
+
+Next: Phase 2.4.5 — suspended and climbable fishing nets.

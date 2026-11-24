@@ -148,6 +148,51 @@
     pixel(g,x+5,y-6,4,7,P.cream);
     pixel(g,x+w-9,y-6,4,7,P.cream);
   }
+  // Breakaway boards: shake/cracks are visual only. The solid deck stays
+  // at its registered y until the warning expires, then disappears at once.
+  function breakawayPlank(g,p,time){
+    const {x,y,w,state}=p;
+    if(state==="collapsed"){
+      // Draw a short falling-fragment animation. Never paint a solid-looking
+      // deck while collisions are disabled.
+      const age=Math.max(0,2.5-p.remaining);
+      if(age>.5)return;
+      const fall=Math.min(70,age*135);
+      for(let i=0;i<4;i++){
+        const bx=x+i*w/4+Math.sin(i*4.2+time*3)*5;
+        const by=y+fall+(i%2)*9;
+        pixel(g,bx,by,Math.max(9,w/5),5,i%2?"#8b5039":"#c28b5c");
+        pixel(g,bx+3,by+5,3,6,"#704532");
+      }
+      return;
+    }
+    const warning=state==="warning";
+    const progress=warning?Math.max(0,Math.min(1,1-p.remaining/.65)):0;
+    const shake=warning?Math.round(Math.sin(time*43)*Math.min(3,1+progress*3)):0;
+    const bx=Math.round(x+shake),by=Math.round(y);
+    // The caution-colored plank edges distinguish fragile wood from ordinary
+    // walkways even before their first activation.
+    pixel(g,bx,by,w,10,"#65442e");
+    pixel(g,bx+2,by+1,w-4,4,warning?"#edb16d":"#c99b65");
+    pixel(g,bx+3,by+5,w-6,4,"#986044");
+    for(let i=24;i<w-3;i+=24){
+      pixel(g,bx+i,by+1,2,8,"#66432f");
+      pixel(g,bx+i+4,by+2,3,2,"#eacb8d");
+    }
+    // High contrast cracks grow throughout the 650 ms countdown.
+    for(let i=0;i<3;i++){
+      const cx=bx+10+i*(w-22)/3,cy=by+(i%2);
+      pixel(g,cx,cy+1,5+progress*7,2,"#573a31");
+      pixel(g,cx+6+progress*3,cy+3,3,4,"#573a31");
+      if(warning){
+        pixel(g,cx-1,cy-5,10,2,progress>.5?"#ff795e":"#ffe18b");
+      }
+    }
+    if(warning&&progress>.6){
+      pixel(g,bx+w/2-13,by-15,26,5,"#ff875d");
+      pixel(g,bx+w/2-9,by-19,18,3,"#ffe49b");
+    }
+  }
   function plank(g,x,y,w,kind){
     const shore=kind==="shore",roof=kind==="roof";
     const plankColor=roof?"#a55d49":shore?"#cb9b66":P.woodLight;
@@ -194,5 +239,5 @@
     pixel(g,0,535,960,5,"#266f82");
   }
   prepare();
-  root.CoastSprites={sprite,house,palm,boat,canoePlatform,plank,background,colors:P,playerManifest:boy.FRAME_COUNTS,playerOrigin:boy.ORIGIN};
+  root.CoastSprites={sprite,house,palm,boat,canoePlatform,breakawayPlank,plank,background,colors:P,playerManifest:boy.FRAME_COUNTS,playerOrigin:boy.ORIGIN};
 })(typeof window!=="undefined"?window:globalThis);
