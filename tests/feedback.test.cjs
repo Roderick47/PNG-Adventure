@@ -69,6 +69,7 @@ test("fragile boards and safe timber have different non-color-only cues",()=>{
 });
 test("climbing arrow appears only near climbable ladder or net",()=>{
  const s=scene();s.player.x=1168;s.player.feet=370;
+ s.surfaces=[];s.breakaways=[];s.crabs=[];s.coins=[];s.checkpoint=null;
  const near=harness();Feedback.drawCues(near.g,1050,0,s);
  assert.ok(near.rects.some(r=>r.color===Feedback.COLORS.net));
  s.player.x=700;
