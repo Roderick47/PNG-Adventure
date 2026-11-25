@@ -367,3 +367,44 @@ gating, missing browser APIs, mute/unmute, ambience pause, valid sound
 definitions, camera visibility checks and in-place bounded particle reuse.
 Manual audio and FPS measurements on Android/desktop remain required before
 considering Phase 2.5 production-ready.
+
+
+## Phase 2.6 — Gameplay expansion blueprint
+
+The upgraded player sprite atlas was merged independently in commit
+`722169c`, with **116 frames**, 96 × 112 source cells and a
+foot-anchored, procedural fallback. The new artwork is the character
+visual source of truth. New mechanics must reuse the established
+`CoastBoy` sprite integration and the existing movement controller; do
+not replace the user's atlas with the older block-style character.
+
+- **2.6.1 Village interaction foundation:** visible residents and signposts,
+  contextual `E` or `UP` interaction, small lore or navigational hints.
+- **2.6.2 Pickup and delivery puzzles:** discover and carry coastal village
+  items with a dedicated pickup/drop flow; begin using relevant verified
+  atlas actions without increasing the character collision box.
+- **2.6.3 Ropes and swing challenges:** optional traversals with safe
+  trajectories, touch input compatibility and frame-rate-deterministic
+  physics. Inspect `hang` and `swing` atlas frames for quality first.
+- **2.6.4 Village tasks and progression:** optional delivery objectives,
+  exploration feedback and stage route cues; no mandatory grinding.
+- **2.6.5 Stage 1 content expansion:** new coastal crossing sequences and
+  a distinct final jetty encounter, retaining the established first half.
+- **2.6.6 Integration, balancing and device QA:** sprite alignment,
+  accessibility, difficulty curve, performance, checkpoint reliability and
+  phone/tablet testing before Phase 2.7.
+
+### Phase 2.6.1 — Village encounters
+
+New `coast/world/interactions.js` provides a world-coordinate,
+camera-culled, pure rendering and proximity system for five village
+signposts and residents. Press **E** on desktop or the existing **UP**
+button on mobile near an object to read a short interaction message.
+Ladders and climbable nets retain priority. Progress is session-local,
+with no changes to physics, saves, collisions or the custom sprite atlas.
+The interaction system can later support delivery objectives without
+rewriting the controller.
+
+`tests/interactions.test.cjs` covers placement, proximity limits,
+deterministic drawing, reduced-motion preference, camera culling and
+unchanged level state.
