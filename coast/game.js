@@ -4,6 +4,7 @@
   const L=window.CoastLevel,S=window.CoastSprites;
   const water=window.CoastWater.create();
   const feedback=window.CoastFeedback.create();
+  const interactions=window.CoastInteractions.create();
   const budget=window.CoastRenderBudget;
   const AUDIO_KEY="png-adventure-coast-muted-v1";
   let mutedPreference=false;
@@ -52,6 +53,7 @@
     }
   }
   function reset(){
+    interactions.reset();
     sound.update(clock,false);
     feedback.reset();
     water.reset();
@@ -108,9 +110,19 @@
     coinsEl.textContent="◆ "+collected;
     timeEl.textContent=formatTime(runTime);
   }
-  function flash(text){
+  function flash(text,duration=1300){
     statusEl.textContent=text;
-    setTimeout(()=>{if(statusEl.textContent===text)statusEl.textContent=""},1300);
+    setTimeout(()=>{if(statusEl.textContent===text)statusEl.textContent=""},duration);
+  }
+  function talk(){
+    if(mode!=="playing"||p.climbing)return false;
+    // Existing ladders and nets keep priority over world interactions.
+    if(climbLevel.nearbyLadder(p.x,p.feet))return false;
+    const dialogue=interactions.interact(p);
+    if(!dialogue)return false;
+    flash(dialogue.text+"  ("+dialogue.discovered+"/"+dialogue.total+" explored)",4400);
+    sound.cue("collect");
+    return true;
   }
   function burst(x,y,color,n){
     for(let i=0;i<n;i++)budget.addParticle(fx,{x,y,vx:(Math.random()-.5)*130,vy:-70-Math.random()*100,life:.45+Math.random()*.25,color});
@@ -218,6 +230,7 @@
     window.CoastVillage.draw(g,camera,L.houses);
     window.CoastWildlife.draw(g,camera,clock,L,{reducedMotion:reduceMotion});
     window.CoastVegetation.draw(g,camera,clock,{reducedMotion:reduceMotion});
+    window.CoastInteractions.draw(g,camera,clock,p,{reducedMotion:reduceMotion});
     for(const pform of L.surfaces){
       if(!budget.visible(pform.x,pform.w,camera,80))continue;
       S.plank(g,pform.x,pform.y,pform.w,pform.kind);
@@ -312,6 +325,7 @@
     channel[k]=!!isDown;
     const held=keyboardHeld[k]||touchHeld[k];
     if(k==="jump"&&held&&!keys.jump)jump();
+    if(k==="up"&&held&&!keys.up)talk();
     keys[k]=held;
   }
   function mapped(code){
@@ -327,6 +341,7 @@
       if(!e.repeat){if(mode==="playing")display("pause");else if(mode==="pause")resume();}
       return;
     }
+    if(e.code==="KeyE"){e.preventDefault();if(!e.repeat)talk();return;}
     const k=mapped(e.code);if(!k)return;
     e.preventDefault();if(e.repeat)return;setHeld(k,true);
   });
