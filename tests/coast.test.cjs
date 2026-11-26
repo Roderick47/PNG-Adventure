@@ -88,6 +88,8 @@ test("sprites instantiate, stage boots, moves both ways, jumps and pauses",()=>{
  vm.runInContext(fs.readFileSync(path.join(root,"coast","world","canoes.js"),"utf8"),sandbox);
  vm.runInContext(fs.readFileSync(path.join(root,"coast","world","breakaways.js"),"utf8"),sandbox);
  vm.runInContext(fs.readFileSync(path.join(root,"coast","world","nets.js"),"utf8"),sandbox);
+ vm.runInContext(fs.readFileSync(path.join(root,"coast","world","interactions.js"),"utf8"),sandbox);
+ assert.ok(window.CoastInteractions);
  assert.ok(window.CoastNets);
  assert.ok(window.CoastBreakaways);
  assert.ok(window.CoastCanoes);
